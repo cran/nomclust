@@ -24,6 +24,7 @@ WCM <- function(matrix, num_cat) {
         temp[u] <- (step[u]/cluster)^2
       }
       gini[l] <- (1-sum(temp))*K/(K-1)
+      gini[l] <- ifelse(is.nan(gini[l]),0,gini[l])
     }
     var[g] <- sum(gini)*cluster/(m*n)
   }

@@ -40,7 +40,9 @@
 #' \code{\link[nomclust]{lin1}},
 #' \code{\link[nomclust]{morlini}},
 #' \code{\link[nomclust]{of}},
-#' \code{\link[nomclust]{sm}}.
+#' \code{\link[nomclust]{sm}},
+#' \code{\link[nomclust]{ve}},
+#' \code{\link[nomclust]{vm}}.
 #'
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
@@ -85,8 +87,8 @@ lin <- function(data) {
   lin <- matrix(data=0,nrow=r,ncol=r)
   weights <- vector(mode="numeric", length=s)
   
-  for (i in 1:r) {
-    for (j in 1:r) {
+  for (i in 1:(r-1)) {
+    for (j in (1+i):r) {
       for (k in 1:s) {
         c <- data[i,k]
         d <- data[j,k]
@@ -103,8 +105,10 @@ lin <- function(data) {
       }
       else {
         lin[i,j] <- 1/(1/sum(weights)*(sum(agreement))) - 1
+        lin[j,i] <- lin[i,j]
       }
     }
   }
+  lin[lin == -Inf] <- max(lin) + 1
   return(lin)
 }

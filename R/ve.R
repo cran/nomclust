@@ -1,44 +1,36 @@
-#' Goodall 3 Measure
+#' Variable Entropy measure
 #' 
-#' @description The Goodall 3 similarity measure was firstly introduced in (Boriah et al., 2008).           
-#' The measure assigns higher similarity if the infrequent categories match
-#' regardless on frequencies of other categories.
+#' @description The Variable Entropy similarity measure was introduced in (Sulc and Rezankova, 2015).
+#' It treats similarity between two categories according to within-cluster variability expressed by the entropy.
+#' The novel similarity measures praise more the match of two categories in a variable with high variability, because it is rarer,
+#' than the match in a low-variability variable.
 #' Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
 #' an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
 #' \code{1/S-1}.\cr
-#' \cr                                                                   
-#' The use and evaluation of clustering with this measure can be found e.g. in (Sulc, 2015).                                   
+#' \cr                                                           
 #'  
-#' @param data data frame with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
+#' @param data data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
 #' 
 #' @return Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
 #' between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
 #' \cr
+#' 
 #' @references
-#' Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-#' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254. Available at:
-#' \url{ http://www-users.cs.umn.edu/~sboriah/PDFs/BoriahBCK2008.pdf}.
-#' \cr
-#' \cr
-#' Goodall, V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
-#' \cr
-#' \cr
-#' Sulc, Z. (2015). Application of Goodall's and Lin's similarity measures in hierarchical clustering.
-#' In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomica, 2015, p. 112-118. Available at:
-#' \url{http://fis.vse.cz/wp-content/uploads/2015/01/DD_FIS_2015_CELY_SBORNIK.pdf}.
+#' Sulc, Z. and Rezankova H. (2015). Novel similarity measures for categorical data based on mutability and entropy.
+#'  Conference of the International Federation of Classification Societies. Bologna: Ospitalia, p. 209.
 #'
 #' @seealso
 #' \code{\link[nomclust]{eskin}},
 #' \code{\link[nomclust]{good1}},
 #' \code{\link[nomclust]{good2}},
+#' \code{\link[nomclust]{good3}},
 #' \code{\link[nomclust]{good4}},
 #' \code{\link[nomclust]{iof}},
 #' \code{\link[nomclust]{lin}},
 #' \code{\link[nomclust]{lin1}},
-#' \code{\link[nomclust]{morlini}},
+#' \code{\link[nomclust]{morlini}}, 
 #' \code{\link[nomclust]{of}},
 #' \code{\link[nomclust]{sm}},
-#' \code{\link[nomclust]{ve}},
 #' \code{\link[nomclust]{vm}}.
 #'
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
@@ -47,11 +39,11 @@
 #' #sample data
 #' data(data20)
 #' # Creation of proximity matrix
-#' prox_goodall_3 <- good3(data20)
-#'
+#' prox_ve <- ve(data20)
+#' 
 #' @export 
 
-good3 <- function(data) {
+ve <- function(data) {
   
   r <- nrow(data)
   s <- ncol(data)
@@ -74,31 +66,42 @@ good3 <- function(data) {
   data <- data.frame(data2)
   
   
-  freq.abs <- freq.abs(data)
-  freq.rel <- freq.abs/r
+  #number of categories
+  num_cat <- sapply(data, function(x) length(unique(x)))
+  
+  #frequency tables
+  abs.freq <- freq.abs(data)
+  rel.freq <- abs.freq/r
+  ln.freq <- log(rel.freq)
+  ln.freq[ln.freq == -Inf] <- 0
+  
+  #entropy
+  entropy_matrix <- rel.freq * ln.freq
+  entropy<- - colSums(entropy_matrix)
+  norm_entropy <- entropy/log(num_cat)
+  norm_entropy <- ifelse(is.nan(norm_entropy),0,norm_entropy)
   
   agreement <- vector(mode="numeric", length=s)
-  good3 <- matrix(data=0,nrow=r,ncol=r)
+  ve <- matrix(data=0,nrow=r,ncol=r)
   
   for (i in 1:(r-1)) {
     for (j in (1+i):r) {
       for (k in 1:s) {
-        c <- data[i,k]
         if (data[i,k] == data[j,k]) {
-          agreement[k] <- 1 - freq.rel[c,k]^2
+          agreement[k] <- norm_entropy[k]
         }
         else {
           agreement[k] <- 0
         }
       }
       if (i == j) {
-        good3[i,j] <- 0
+        ve[i,j] <- 0
       }
       else {
-        good3[i,j] <- 1-1/s*(sum(agreement))
-        good3[j,i] <- good3[i,j]
+        ve[i,j] <- 1-1/s*(sum(agreement))
+        ve[j,i] <- ve[i,j]
       }
     }
   }
-  return(good3)
+  return(ve)
 }

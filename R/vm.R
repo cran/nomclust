@@ -1,12 +1,13 @@
-#' Goodall 1 Measure
+#' Variable Mutability measure
 #' 
-#' @description The Goodall 1 similarity measure was mentioned e.g. in (Boriah et al., 2008).
-#' It is a simple modification of the original Goodall measure (Goodall, 1966). The measure assigns higher similarity to infrequent matches.
+#' @description The Variable Mutability similarity measure was introduced in (Sulc and Rezankova, 2015).
+#' It treats similarity between two categories according to within-cluster variability expressed by the Gini coefficient (mutability).
+#' The novel similarity measures praise more the match of two categories in a variable with high variability, because it is rarer,
+#' than the match in a low-variability variable.
 #' Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
 #' an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
 #' \code{1/S-1}.\cr
 #' \cr                                                           
-#' The use and evaluation of clustering with this measure can be found e.g. in (Sulc, 2015).
 #'  
 #' @param data data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
 #' 
@@ -14,20 +15,12 @@
 #' between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
 #' \cr
 #' @references
-#' Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-#'  In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254. Available at:
-#'  \url{ http://www-users.cs.umn.edu/~sboriah/PDFs/BoriahBCK2008.pdf}.
-#'  \cr
-#'  \cr
-#' Goodall, V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
-#' \cr
-#' \cr
-#' Sulc, Z. (2015). Application of Goodall's and Lin's similarity measures in hierarchical clustering.
-#' In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomica, 2015, p. 112-118. Available at:
-#' \url{http://fis.vse.cz/wp-content/uploads/2015/01/DD_FIS_2015_CELY_SBORNIK.pdf}.
+#' Sulc, Z. and Rezankova H. (2015). Novel similarity measures for categorical data based on mutability and entropy.
+#'  Conference of the International Federation of Classification Societies. Bologna: Ospitalia, p. 209.
 #'
 #' @seealso
 #' \code{\link[nomclust]{eskin}},
+#' \code{\link[nomclust]{good1}},
 #' \code{\link[nomclust]{good2}},
 #' \code{\link[nomclust]{good3}},
 #' \code{\link[nomclust]{good4}},
@@ -37,8 +30,7 @@
 #' \code{\link[nomclust]{morlini}}, 
 #' \code{\link[nomclust]{of}},
 #' \code{\link[nomclust]{sm}},
-#' \code{\link[nomclust]{ve}},
-#' \code{\link[nomclust]{vm}}.
+#' \code{\link[nomclust]{ve}}.
 #'
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
@@ -46,12 +38,13 @@
 #' #sample data
 #' data(data20)
 #' # Creation of proximity matrix
-#' prox_goodall_1 <- good1(data20)
+#' prox_vm <- vm(data20)
 #' 
 #' @export 
 
-good1 <- function(data) {
-  
+
+vm <- function(data) {
+
   r <- nrow(data)
   s <- ncol(data)
   
@@ -71,35 +64,43 @@ good1 <- function(data) {
     }
   }
   data <- data.frame(data2)
-  
-  
-  freq.abs <- freq.abs(data)
-  freq.rel <- freq.abs/r
-  freq.rel2 <- freq.rel^2
+
+
+  #number of categories
+  num_cat <- sapply(data, function(x) length(unique(x)))
+
+  #frequency tables
+  abs.freq <- freq.abs(data)
+  rel.freq <- abs.freq/r
+  rel2.freq <- rel.freq^2
+
+  #gini coefficient
+  sum_rel2.freq <- colSums(rel2.freq)
+  gini <- 1- sum_rel2.freq
+  norm_gini <- gini*num_cat/(num_cat-1)
+  norm_gini <- ifelse(is.nan(norm_gini),0,norm_gini)
   
   agreement <- vector(mode="numeric", length=s)
-  good1 <- matrix(data=0,nrow=r,ncol=r)
-  
+  vm <- matrix(data=0,nrow=r,ncol=r)
+
   for (i in 1:(r-1)) {
     for (j in (1+i):r) {
       for (k in 1:s) {
-        c <- data[i,k]
         if (data[i,k] == data[j,k]) {
-          logic <- t(freq.rel[,k] <= freq.rel[c,k])
-          agreement[k] <- 1 - sum(freq.rel2[,k] * logic)
-        }
-        else {
+          agreement[k] <- norm_gini[k]
+       }
+       else {
           agreement[k] <- 0
         }
       }
       if (i == j) {
-        good1[i,j] <- 0
+        vm[i,j] <- 0
       }
       else {
-        good1[i,j] <- 1-1/s*(sum(agreement))
-        good1[j,i] <- good1[i,j]
+        vm[i,j] <- 1-1/s*(sum(agreement))
+        vm[j,i] <- vm[i,j]
       }
     }
   }
-  return(good1)
+  return(vm)
 }

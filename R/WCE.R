@@ -28,6 +28,7 @@ WCE <- function(matrix, num_cat) {
         }
       }
       entropy_norm[l] <- -sum(temp)/log(K)
+      entropy_norm[l] <- ifelse(is.nan(entropy_norm[l]),0,entropy_norm[l])
     }
     var[g] <- sum(entropy_norm)*cluster/(m*n)
   }

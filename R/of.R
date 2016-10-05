@@ -39,7 +39,9 @@
 #' \code{\link[nomclust]{lin}},
 #' \code{\link[nomclust]{lin1}},
 #' \code{\link[nomclust]{morlini}},
-#' \code{\link[nomclust]{sm}}.
+#' \code{\link[nomclust]{sm}},
+#' \code{\link[nomclust]{ve}},
+#' \code{\link[nomclust]{vm}}.
 #'
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
@@ -83,8 +85,8 @@ of <- function(data) {
   agreement <- vector(mode="numeric", length=s)
   of <- matrix(data=0,nrow=r,ncol=r)
   
-  for (i in 1:r) {
-    for (j in 1:r) {
+  for (i in 1:(r-1)) {
+    for (j in (1+i):r) {
       for (k in 1:s) {
         c <- data[i,k]
         d <- data[j,k]
@@ -96,6 +98,7 @@ of <- function(data) {
         }
       }
       of[i,j] <- 1/(1/s*(sum(agreement)))-1
+      of[j,i] <- of[i,j]
     }
   }
   return(of)

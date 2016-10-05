@@ -38,7 +38,9 @@
 #' \code{\link[nomclust]{lin}},
 #' \code{\link[nomclust]{lin1}},
 #' \code{\link[nomclust]{of}},
-#' \code{\link[nomclust]{sm}}.
+#' \code{\link[nomclust]{sm}},
+#' \code{\link[nomclust]{ve}},
+#' \code{\link[nomclust]{vm}}.
 #'
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
@@ -80,7 +82,7 @@ morlini <- function(data) {
   
   #abs.freq <- freq.abs(data)
   
-  data_dummy <- dummy.data.frame(data, dummy.classes ="ALL")
+  data_dummy <- dummy.data.frame(data, dummy.classes ="ALL",omit.constants = F)
   
   n <- nrow(data_dummy)
   hs <- ncol(data_dummy)
@@ -92,8 +94,8 @@ morlini <- function(data) {
   agreement <- vector(mode="numeric", length=hs)
   
   #computation of Eij
-  for (i in 1:n) {
-    for (j in 1:n) {
+  for (i in 1:(n-1)) {
+    for (j in (1+i):n) {
       for (k in 1:hs) {
         if (data_dummy[i,k] == 1 & data_dummy[j,k] == 1) {
           agreement[k] <- 1
@@ -103,6 +105,7 @@ morlini <- function(data) {
         }
       }
       E[i,j] <- fsv2 %*% agreement
+      E[j,i] <- E[i,j]
     }
   }
 
@@ -110,8 +113,8 @@ morlini <- function(data) {
   cum <- cumsum(num_cat)
   F <- matrix(data=0,nrow=n,ncol=n)
 
-  for (i in 1:n) {
-    for (j in 1:n) {
+  for (i in 1:(n-1)) {
+    for (j in (1+i):n) {
       v <- 0
       agreement <- vector(mode="numeric", length=hs)
       for (k in 1:s) {
@@ -123,6 +126,7 @@ morlini <- function(data) {
         v <- cum[k]      
       }
       F[i,j] <- t(agreement) %*% fsv2
+      F[j,i] <- F[i,j]
     }
   }
   morlini <- 1 - E/(E+F)

@@ -1,58 +1,48 @@
-#' Nominal Clustering
+#' Nominal Clustering based on a Proximity Matrix
 #' 
-#' @description The Nominal Clustering (nomclust) performs hierarchical cluster analysis (HCA) with objects characterized by nominal (categorical) variables.
-#' It performs a serie of cluster solutions, usually from two-cluster solution till six-cluster solution.
-#' It allows to choose one from 11 different similarity measures and one from 3 linkage methods. The function
-#' also contains an evaluation part. The created clusters are evaluated from a point of view of the
-#' within-cluster variability by the following indices: Within-cluster Mutability coefficient (\code{WCM}),
-#' Within-cluster entropy coefficient (\code{WCE}), Pseudo tau coefficient (\code{PSTau}), Pseudo uncertainty coefficient (\code{PSU}) and Pseudo F
-#' Indices based on the mutability (\code{PSFM}) and the entropy (\code{PSFE}).
+#' @description Based on the original dataset and the proximity matrix, the function computes cluster membership variables for a user-defined number of cluster solutions. 
+#' Optionally, it evaluates clustering results using six evaluation criteria based on the within-cluster variability:
+#' Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+#' Pseudo tau coefficient (PSTau), Pseudo uncertainty coefficient (PSU) and Pseudo F, Indices based on the mutability (PSFM) and the entropy (PSFE).
 #' 
 #' @param data data frame or a matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
 #' 
-#' @param measure character string defining the similarity measure which wil be used for computation of proximity matrix:
-#' \code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"morlini"}, \code{"of"}, \code{"sm"}.
+#' @param prox_matrix full proximity matrix computed using any similarity measure from the data analyzed.
 #' 
-#' @param method character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.
+#' @param clu_low numeric value expressing the lower bound for number of cluster solutions.
 #' 
-#' @param clu_low  numeric value expressing the lower bound for number of cluster solutions.
-#' 
-#' @param clu_high  numeric value expressing the higher bound for number of cluster solutions.
+#' @param clu_high numeric value expressing the higher bound for number of cluster solutions.
 #' 
 #' @param eval logical operator; if TRUE, there is performed an evaluation of clustering results
 #' 
-#' @param prox logical operator; if TRUE, the proximity matrix is a part of the output
+#' @param method character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.
 #' 
-#' @return Function returns a list following components:
-#' \cr
-#' \cr
-#' \code{mem}  data frame consisting of cluster membership variables 
-#' \cr
-#' \cr
-#' \code{eval} data frame containing clustering evaluation statistics
-#' \cr
-#' \cr
-#' \code{prox} matrix containing proximities between all combination of pairs of objects (voluntary)
-#'
+#' @return Function returns a data frame, where the rows express a serie of cluster solutions and columns
+#' clustering evaluation statistics in a following order: \code{WCM}, \code{WCE}, \code{PSTau}, \code{PSU}, \code{PSFM}, \code{PSFE}.
+#' 
 #' @seealso
-#' \code{\link[nomclust]{evalclust}}, \code{\link[cluster]{agnes}}.
+#' \code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{evalclust}}.
 #' 
 #' @examples
 #' #sample data
 #' data(data20)
-#' hca <- nomclust(data20, iof, method = "average", clu_high = 5, prox = TRUE)
+#' #computation of a proximity matrix using the iof similarity measure
+#' matrix <- iof(data20)
+#' #creation of a dataset with cluster memberships
+#' hca <- nomprox(data20, matrix, clu_high = 5, method = "complete")
 #' #getting evaluation statistics
 #' eval <- hca$eval
 #' #getting cluster membership variables
-#' mem <- hca$mem
-#' #getting a proximity matrix
-#' prox <- hca$prox
+#' mem <- hca$mem 
 #' 
 #' @export
 
-nomclust <- function (data, measure = iof, clu_low = 2, clu_high = 6, eval = TRUE, 
-                      prox = FALSE, method = "complete") {
+
+
+nomprox <- function (data, prox_matrix, clu_low = 2, clu_high = 6, eval = TRUE, method = "complete") {
   
+  #packages needed
+  #require(cluster)
   #check for cluster sizes
   if (clu_low >= clu_high) {
     stop("clu_low must be set lower than clu_high")
@@ -62,18 +52,10 @@ nomclust <- function (data, measure = iof, clu_low = 2, clu_high = 6, eval = TRU
     stop("invalid clustering method")
   }
   
-  #number of clusters cannot exceed the parameter clu_high
-  if (nrow(data)<clu_high) {
-    stop("parameter clu_high cannot exceed the number of clustered objects")
-  }
-  
   #if matrix, coerce to data.frame
   if(is.matrix(data) == 1) {
     data <- as.data.frame(data)
   }
-  
-  #computing the proximity matrices
-  prox_matrix <- measure(data)
   
   #number of variables of dataset
   num_var <- ncol(data)
@@ -134,18 +116,13 @@ nomclust <- function (data, measure = iof, clu_low = 2, clu_high = 6, eval = TRU
   }
   }
 
-  if (eval == 1 & prox == 1) {
-    list <- list(mem = clusters, eval = results, prox = prox_matrix)
-  }
-  if (eval == 0 & prox == 1) {
-    list <- list(mem = clusters, prox = prox_matrix)
-  }
-  if (eval == 1 & prox == 0) {
+  if (eval == 1 ) {
     list <- list(mem = clusters, eval = results)
   }
-  if (eval == 0 & prox == 0) {
+  if (eval == 0) {
     list <- list(mem = clusters)
   }
+  
 
   return(list)
 }
