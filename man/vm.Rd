@@ -31,9 +31,6 @@ data(data20)
 prox_vm <- vm(data20)
 
 }
-\author{
-Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
-}
 \references{
 Sulc, Z. and Rezankova H. (2015). Novel similarity measures for categorical data based on mutability and entropy.
  Conference of the International Federation of Classification Societies. Bologna: Ospitalia, p. 209.
@@ -52,4 +49,6 @@ Sulc, Z. and Rezankova H. (2015). Novel similarity measures for categorical data
 \code{\link[nomclust]{sm}},
 \code{\link[nomclust]{ve}}.
 }
-
+\author{
+Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
+}

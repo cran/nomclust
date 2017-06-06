@@ -6,14 +6,14 @@ Authors@R: c(person("Zdenek", "Sulc", role = c("aut", "cre"),
 Author: Zdenek Sulc [aut, cre],
     Hana Rezankova [aut]
 Maintainer: Zdenek Sulc <zdenek.sulc@vse.cz>
-Version: 1.00.1011
-Date: 2016-9-7
+Version: 1.1.1106
+Date: 2017-6-6
 Description: Package for hierarchical clustering of objects characterized by
     nominal variables.
 Imports: cluster, dummies
 License: GPL (>= 2)
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2016-09-07 10:29:12 UTC; zdenek
+Packaged: 2017-06-06 14:41:21 UTC; zdenek
 Repository: CRAN
-Date/Publication: 2016-10-05 14:37:41
+Date/Publication: 2017-06-06 14:51:41 UTC

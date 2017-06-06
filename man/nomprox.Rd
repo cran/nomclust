@@ -46,4 +46,3 @@ mem <- hca$mem
 \seealso{
 \code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{evalclust}}.
 }
-

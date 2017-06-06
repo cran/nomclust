@@ -33,13 +33,9 @@ data(data20)
 prox_iof <- iof(data20)
 
 }
-\author{
-Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
-}
 \references{
 Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254. Available at:
- \url{ http://www-users.cs.umn.edu/~sboriah/PDFs/BoriahBCK2008.pdf}.
+In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
  \cr
  \cr
 Spark-Jones, K. (1972). A statistical interpretation of term specificity and its application in retrieval.
@@ -64,4 +60,6 @@ Available at: \url{http://www.amse.ue.wroc.pl/papers/Sulc,Rezankova.pdf}.
 \code{\link[nomclust]{ve}},
 \code{\link[nomclust]{vm}}.
 }
-
+\author{
+Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
+}

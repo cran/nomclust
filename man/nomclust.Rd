@@ -59,4 +59,3 @@ prox <- hca$prox
 \seealso{
 \code{\link[nomclust]{evalclust}}, \code{\link[cluster]{agnes}}.
 }
-

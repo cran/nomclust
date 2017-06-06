@@ -30,13 +30,9 @@ data(data20)
 prox_goodall_1 <- good1(data20)
 
 }
-\author{
-Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
-}
 \references{
 Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
- In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254. Available at:
- \url{ http://www-users.cs.umn.edu/~sboriah/PDFs/BoriahBCK2008.pdf}.
+ In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
  \cr
  \cr
 Goodall, V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
@@ -60,4 +56,6 @@ In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomic
 \code{\link[nomclust]{ve}},
 \code{\link[nomclust]{vm}}.
 }
-
+\author{
+Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
+}

@@ -15,8 +15,7 @@
 #' \cr
 #' @references
 #' Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-#'  In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254. Available at:
-#'  \url{ http://www-users.cs.umn.edu/~sboriah/PDFs/BoriahBCK2008.pdf}.
+#'  In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
 #'  \cr
 #'  \cr
 #' Eskin, E., Arnold, A., Prerau, M., Portnoy, L. and Stolfo, S. (2002). A geometric framework for unsupervised anomaly detection.

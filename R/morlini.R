@@ -16,8 +16,7 @@
 #'
 #' @references
 #' Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-#' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254. Available at:
-#'  \url{ http://www-users.cs.umn.edu/~sboriah/PDFs/BoriahBCK2008.pdf}.
+#' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
 #'  \cr
 #'  \cr
 #' Morlini, I., Zani, S. (2012). A new class of weighted similarity indices using polytomous variables.
@@ -129,7 +128,8 @@ morlini <- function(data) {
       F[j,i] <- F[i,j]
     }
   }
-  morlini <- 1 - E/(E+F)
+   morlini <- 1 - E/(E+F)
+   morlini <- ifelse(is.nan(morlini),0,morlini)
   return(morlini)
 }
   

@@ -41,4 +41,3 @@ evaluation <- evalclust(data_clu2, 5, clu_high = 7)
 \seealso{
 \code{\link[nomclust]{nomclust}}.
 }
-
