@@ -2,60 +2,120 @@
 % Please edit documentation in R/nomclust.R
 \name{nomclust}
 \alias{nomclust}
-\title{Nominal Clustering}
+\title{Hierarchical Cluster Analysis for Nominal Data}
 \usage{
-nomclust(data, measure = iof, clu_low = 2, clu_high = 6, eval = TRUE,
-  prox = FALSE, method = "complete")
+nomclust(
+  data,
+  measure = "lin",
+  method = "average",
+  clu.high = 6,
+  eval = TRUE,
+  prox = 100,
+  opt = TRUE
+)
 }
 \arguments{
-\item{data}{data frame or a matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 
-\item{measure}{character string defining the similarity measure which wil be used for computation of proximity matrix:
-\code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"morlini"}, \code{"of"}, \code{"sm"}.}
+\item{measure}{A \emph{character} string defining the similarity measure used for computation of proximity matrix in HCA:
+\code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"morlini"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.}
 
-\item{clu_low}{numeric value expressing the lower bound for number of cluster solutions.}
+\item{method}{A \emph{character} string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
 
-\item{clu_high}{numeric value expressing the higher bound for number of cluster solutions.}
+\item{clu.high}{A \emph{numeric} value expressing the maximal number of cluster for which the cluster memberships variables are produced.}
 
-\item{eval}{logical operator; if TRUE, there is performed an evaluation of clustering results}
+\item{eval}{A \emph{logical} operator; if TRUE, evaluation of the clustering results is performed.}
 
-\item{prox}{logical operator; if TRUE, the proximity matrix is a part of the output}
+\item{prox}{A \emph{logical} operator or a numeric value. If a logical value TRUE indicates that the proximity matrix is a part of the output. A numeric value (integer) of this argument indicates the maximal number of cases in a dataset for which a proximity matrix will occur in the output.}
 
-\item{method}{character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
+\item{opt}{A \emph{logical} operator; if TRUE, the time optimization method is run to substantially decrease computation time of the dissimilarity matrix calcation. Time optimalization method cannot be run if the proximity matrix is to be produced. In such a case, this parameter is automatically set to FALSE.}
 }
 \value{
-Function returns a list following components:
+The function returns a \emph{list} with up to five components.
 \cr
 \cr
-\code{mem}  data frame consisting of cluster membership variables 
+The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a \emph{list}.
 \cr
 \cr
-\code{eval} data frame containing clustering evaluation statistics
+The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
+To see them all in once, the form of a \emph{data.frame} is more appropriate.
 \cr
 \cr
-\code{prox} matrix containing proximities between all combination of pairs of objects (voluntary)
+The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
+\cr
+\cr
+The \code{prox} component contains the dissimilarity matrix in a form of a \emph{matrix}.
+\cr
+\cr
+The \code{dend} component can be found in the output only together with the \code{prox} component. It contains all the necessary information for dendrogram creation.
 }
 \description{
-The Nominal Clustering (nomclust) performs hierarchical cluster analysis (HCA) with objects characterized by nominal (categorical) variables.
-It performs a serie of cluster solutions, usually from two-cluster solution till six-cluster solution.
-It allows to choose one from 11 different similarity measures and one from 3 linkage methods. The function
-also contains an evaluation part. The created clusters are evaluated from a point of view of the
-within-cluster variability by the following indices: Within-cluster Mutability coefficient (\code{WCM}),
-Within-cluster entropy coefficient (\code{WCE}), Pseudo tau coefficient (\code{PSTau}), Pseudo uncertainty coefficient (\code{PSU}) and Pseudo F
-Indices based on the mutability (\code{PSFM}) and the entropy (\code{PSFE}).
+The \code{nomclust()} function runs hierarchical cluster analysis (HCA) with objects characterized by nominal (categorical) variables. It completely covers the clustering process, from the proximity matrix calculation to the evaluation of the quality of clustering.
+The function contains thirteen similarity measures for nominal data summarized in (Boriah et al., 2008) or introduced by Morlini and Zani in (Morlini and Zani, 2012), and by (Sulc and Rezankova, 2019). 
+It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by seven evaluation criteria, see (Sulc et al., 2018). The output of the \code{nomclust()} function may serve as an input for visualization functions in the \bold{nomclust} package.
 }
 \examples{
-#sample data
+# sample data
 data(data20)
-hca <- nomclust(data20, iof, method = "average", clu_high = 5, prox = TRUE)
-#getting evaluation statistics
-eval <- hca$eval
-#getting cluster membership variables
-mem <- hca$mem
-#getting a proximity matrix
-prox <- hca$prox
+
+# creating an object with results of hierarchical clustering of 
+hca.object <- nomclust(data20, measure = "lin", method = "average",
+ clu.high = 5, prox = TRUE, opt = FALSE)
+
+# obtaining values of evaluation indices
+data20.eval <- hca.object$eval
+
+# getting the optimal numbers of clusters
+data20.opt <- hca.object$opt
+
+# extracting cluster membership variables
+data20.mem <- hca.object$mem
+
+# extracting cluster membership variables as a data frame
+data20.mem <- as.data.frame(hca.object$mem)
+
+# obtaining a proximity matrix
+data20.prox <- hca.object$prox
+
+# setting the maximal number of objects for which a proximity matrix is provided in the output to 30
+hca.object <- nomclust(data20, measure = "lin", method = "average",
+ clu.high = 5, prox = 30, opt = FALSE)
+
+# generating of a larger dataset containing repeatedly occuring objects
+set.seed(150)
+sample150 <- sample(1:nrow(data20), 150, replace = TRUE)
+data150 <- data20[sample150, ]
+
+# running hierarchical clustering WITH the time optimization
+start <- Sys.time()
+hca.object.opt.T <- nomclust(data150, measure = "lin", opt = TRUE)
+end <- Sys.time()
+end - start
+
+# running hierarchical clustering WITHOUT the time optimization
+start <- Sys.time()
+hca.object.opt.F <- nomclust(data150, measure = "lin", opt = FALSE)
+end <- Sys.time()
+end - start
 
 }
+\references{
+Boriah S., Chandola V. and Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
+In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
+\cr
+\cr
+Morlini I. and Zani S. (2012). A new class of weighted similarity indices using polytomous variables. Journal of Classification, 29(2), p. 199-226.
+\cr
+\cr
+Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
+\cr
+\cr
+Sulc Z. and Rezankova H. (2019). Comparison of Similarity Measures for Categorical Data in Hierarchical Clustering. Journal of Classification. 2019, 35(1), p. 58-72. DOI: 10.1007/s00357-019-09317-5.
+}
 \seealso{
-\code{\link[nomclust]{evalclust}}, \code{\link[cluster]{agnes}}.
+\code{\link[nomclust]{evalclust}}, \code{\link[nomclust]{nomprox}}, \code{\link[nomclust]{eval.plot}}, \code{\link[nomclust]{dend.plot}}.
+}
+\author{
+Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
 }

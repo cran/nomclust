@@ -1,29 +1,22 @@
-#' Goodall 1 Measure
+#' Goodall 1 (G1) Measure
 #' 
-#' @description The Goodall 1 similarity measure was mentioned e.g. in (Boriah et al., 2008).
-#' It is a simple modification of the original Goodall measure (Goodall, 1966). The measure assigns higher similarity to infrequent matches.
-#' Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-#' an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-#' \code{1/S-1}.\cr
-#' \cr                                                           
-#' The use and evaluation of clustering with this measure can be found e.g. in (Sulc, 2015).
+#' @description A function for calculation of a proximity (dissimilarity) matrix based on the G1 similarity measure.
+#' 
 #'  
-#' @param data data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
+#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
 #' 
-#' @return Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-#' between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+#' @return The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 #' \cr
+#' 
+#' @details The Goodall 1 similarity measure was presented in (Boriah et al., 2008).
+#' It is a simple modification of the original Goodall measure (Goodall, 1966). The measure assigns higher weights to infrequent matches.
+#' 
 #' @references
-#' Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-#'  In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
+#' Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
+#' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
 #'  \cr
 #'  \cr
-#' Goodall, V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
-#' \cr
-#' \cr
-#' Sulc, Z. (2015). Application of Goodall's and Lin's similarity measures in hierarchical clustering.
-#' In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomica, 2015, p. 112-118. Available at:
-#' \url{http://fis.vse.cz/wp-content/uploads/2015/01/DD_FIS_2015_CELY_SBORNIK.pdf}.
+#' Goodall V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
 #'
 #' @seealso
 #' \code{\link[nomclust]{eskin}},
@@ -42,10 +35,11 @@
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
 #' @examples
-#' #sample data
+#' # sample data
 #' data(data20)
-#' # Creation of proximity matrix
-#' prox_goodall_1 <- good1(data20)
+#' 
+#' # dissimilarity matrix calculation
+#' prox.good1 <- good1(data20)
 #' 
 #' @export 
 
@@ -54,22 +48,14 @@ good1 <- function(data) {
   r <- nrow(data)
   s <- ncol(data)
   
-  #recoding variables
-  num_var <- ncol(data)
-  num_row <- nrow(data)
-  data2 <- matrix(data = 0, nrow = num_row, ncol = num_var)
-  for (k in 1:num_var) {
-    categories <- unique(data[, k])
-    cat_new <- 1:length(categories)
-    for (l in 1:length(categories)) {
-      for (i in 1:num_row) {
-        if (data[i, k] == categories[l]) {
-          data2[i, k] <- cat_new[l]
-        }
-      }
-    }
-  }
-  data <- data.frame(data2)
+  rnames <- row.names(data)
+  
+  # recoding everything to factors and then to numeric values
+  indx <- sapply(data, is.factor)
+  data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
+  data <- as.data.frame(unclass(data))
+  data <- sapply(data, function(x) as.numeric(x))
+  data <- as.data.frame(data)
   
   
   freq.abs <- freq.abs(data)
@@ -78,6 +64,8 @@ good1 <- function(data) {
   
   agreement <- vector(mode="numeric", length=s)
   good1 <- matrix(data=0,nrow=r,ncol=r)
+  row.names(good1) <- rnames
+  
   
   for (i in 1:(r-1)) {
     for (j in (1+i):r) {

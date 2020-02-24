@@ -1,49 +1,5 @@
-#' Morlini and Zani's (MZ) Measure 
-#' 
-#' @description A function for calculation of a proximity (dissimilarity) matrix based on the MZ similarity measure.
-#' \cr
-#' 
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
-#' 
-#' @return The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
-#' \cr
-#'
-#' @details The MZ measure was originally introduced by Morlini and Zani (2012) under the name S2. The S2 measure was proposed. It is based on a binary-transformed dataset, so the \bold{morlini} function must first create dummy-coded variables.
-#' The measure uses relative frequencies of categories of binary-coded variables, and it assigns higher weights to infrequent categories.
-#'
-#' @references
-#' Morlini I., Zani S. (2012). A new class of weighted similarity indices using polytomous variables. Journal of Classification, 29(2), p. 199-226.
-#' 
-#' 
-#' @seealso
-#' \code{\link[nomclust]{eskin}},
-#' \code{\link[nomclust]{good1}},
-#' \code{\link[nomclust]{good2}},
-#' \code{\link[nomclust]{good3}},
-#' \code{\link[nomclust]{good4}},
-#' \code{\link[nomclust]{iof}},
-#' \code{\link[nomclust]{lin}},
-#' \code{\link[nomclust]{lin1}},
-#' \code{\link[nomclust]{of}},
-#' \code{\link[nomclust]{sm}},
-#' \code{\link[nomclust]{ve}},
-#' \code{\link[nomclust]{vm}}.
-#'
-#' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
-#' 
-#' @examples
-#' # sample data
-#' data(data20)
-#' 
-#' # dissimilarity matrix calculation
-#' prox.morlini <- morlini(data20)
-#' 
-#' @export 
 
-
-
-
-morlini <- function(data) {
+morlini_fx <- function(data, freq = NULL) {
   
   s <- ncol(data)
   num_cat <- sapply(data, function(x) length(unique(x)))

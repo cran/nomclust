@@ -1,100 +1,125 @@
-#' Evaluation of the Clustering
+#' Evaluation of Hierarchical Clustering for Nominal Data
 #' 
-#' @description The function evaluates clustering results no matter which clustering method they were obtained by.
-#' The clusters are evaluated from a point of view of the within-cluster variability by the following indices:
-#' Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-#' Pseudo tau coefficient (PSTau), Pseudo uncertainty coefficient (PSU) and Pseudo F, Indices based on the mutability (PSFM) and the entropy (PSFE).
+#' @description The \bold{evalclust} function calculates a set of evaluation criteria, see (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
+#' It is primarily focused on the evaluation of hierarchical clustering results obtained by similarity measures different from the ones that occur in the \bold{nomclust} package.
+#' Thus, it can serve for comparison of various similarity measures for categorical data.
 #' 
-#' @param data data frame or matrix with cases in rows and variables in colums. First \code{m1} variables are the
-#' original data used for clustering, the next \code{m2} variables express the cluster memberships in an increasing
-#' way (e.g. from clu_2 to clu_6).
+#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
 #' 
-#' @param num_var numeric value which determines how many variables in a dataset were used for the clustering.
+#' @param clusters A \emph{data.frame} or a \emph{list} of cluster memberships in a form of a sequence from the two-cluster solution to the maximal-cluster solution.
 #' 
-#' @param clu_low numeric value expressing the lower bound for number of cluster solutions.
-#' 
-#' @param clu_high  numeric value expressing the higher bound for number of cluster solutions.
-#' 
-#' @return Function returns a data frame, where the rows express a serie of cluster solutions and columns
-#' clustering evaluation statistics in a following order: \code{WCM}, \code{WCE}, \code{PSTau}, \code{PSU}, \code{PSFM}, \code{PSFE}.
-#' 
+#' @return The function returns a \emph{list} with two components.
+#' \cr
+#' \cr
+#' The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
+#' To see them all in once, the form of a \emph{data.frame} is more appropriate.
+#' \cr
+#' \cr
+#' The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
+#'
+#'@references
+#' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
+#'
 #' @seealso
-#' \code{\link[nomclust]{nomclust}}.
+#' \code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{nomprox}}, \code{\link[nomclust]{eval.plot}}.
+#' 
+#' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
 #' @examples
-#' #sample data
+#' # sample data
 #' data(data20)
-#' #creation of a dataset with cluster memberships
-#' data_clu <- nomclust(data20, iof, clu_high = 7)
-#' #binding an original dataset to cluster memberships variables
-#' data_clu2 <- cbind(data20, data_clu$mem)
-#' #evaluation of created clusters
-#' evaluation <- evalclust(data_clu2, 5, clu_high = 7)
+#' 
+#' # creating an object with results of hierarchical clustering
+#' hca.object <- nomclust(data20, measure = "iof", method = "average", clu.high = 7)
+#' 
+#' # the cluster memberships
+#' data20.clu <- hca.object$mem
+#' 
+#' # obtaining evaluation criteria for the provided dataset and cluster memberships
+#' data20.eval <- evalclust(data20, clusters = data20.clu)
+#' 
+#' 
 #' 
 #' @export 
 
-evalclust <- function(data, num_var, clu_low = 2, clu_high = 6) {
+evalclust <- function (data, clusters) {
   
-  if (clu_low >= clu_high) {
-    stop("clu_low must be set lower than clu_high")
+  clu_low = 2
+  
+  # change a possible list input to data.frame
+  if (is.data.frame(clusters) == FALSE) {
+    clusters <- as.data.frame(clusters)
   }
+  
+  # check the lenght of data
+  if (nrow(data) != nrow(clusters)) {
+    stop("The dataset and the cluster membership variables are of different lengths.")
+  }
+  
   
   #if matrix, coerce to data.frame
-  data <- as.data.frame(data)
-  
-  #check lenght of data
-  if (ncol(data) != (num_var + length(seq(clu_low:clu_high)))) {
-       stop("sum of all set parameters does not match with the size of data")
+  if(is.matrix(data) == 1) {
+    data <- as.data.frame(data)
   }
   
-  #cluster membership
-  data_clu <- data
-  for (i in clu_low:clu_high) {
-    names(data_clu)[num_var - clu_low + i + 1] <- paste("clu_", i, sep = "" )
-  }
-  data <- data_clu[,1:num_var]
-  clusters <- data_clu[,(num_var+1):ncol(data_clu)]
+  
+  #number of variables of dataset
+  num_var <- ncol(data)
   
   #max number of categories
   num_cat <- sapply(data, function(x) length(unique(x)))
   max_num_cat <- max(num_cat)
   
-  #creation of set of 3D matrices
-  M <- list()
-  for (i in clu_low:clu_high) {
-    A <- list()
-    A1 <- list()
-    MMM <- array(0,dim=c(max_num_cat,i,num_var))
-    M1 <- array(0,dim=c(max_num_cat,1,num_var))
-    
-    for (j in 1:num_var) {
-      A[[j]] <- table(data[, j], clusters[,i - clu_low + 1])
-      A1[[j]] <- rowSums(A[[j]])
-    }
-    
-    for (j in 1:num_var) {
-      MMM[1:nrow(A[[j]]), 1:ncol(A[[j]]), j] <- A[[j]]
-      M1[1:nrow(A[[j]]),,j] <- A1[[j]]
-    }
-    M[[i-clu_low+2]] <- MMM
-  }
-
-  #evaluation results
-  results <- data.frame(cluster = numeric(clu_high - clu_low + 2), WCM = numeric(clu_high - clu_low + 2), WCE = numeric(clu_high - clu_low + 2),
-                        PSTau = numeric(clu_high - clu_low + 2), PSU = numeric(clu_high - clu_low + 2), PSFM = numeric(clu_high - clu_low + 2), PSFE = numeric(clu_high - clu_low + 2))
   
-  for (i in clu_low:clu_high) {
-    results[i-clu_low+2,1] <- i
-    results[i-clu_low+2,2] <- WCM(M[[i-clu_low+2]], num_cat)
-    results[i-clu_low+2,3] <- WCE(M[[i-clu_low+2]], num_cat)
-    results[i-clu_low+2,4] <- pstau(M[[i-clu_low+2]], M1, num_cat)
-    results[i-clu_low+2,5] <- psu(M[[i-clu_low+2]], M1, num_cat)
-    results[i-clu_low+2,6] <- psfm(M[[i-clu_low+2]], M1, num_cat)
-    results[i-clu_low+2,7] <- psfe(M[[i-clu_low+2]], M1, num_cat)
-    results[1,1] <- 1
-    results[1,2] <- WCM(M1, num_cat)
-    results[1,3] <- WCE(M1, num_cat)
-    results[1,4:7] <- NA
+  clu.high <- ncol(clusters) + 1
+  
+  num_clu <- sapply(clusters, function(x) length(unique(x)))
+  
+  # to check the clusters object
+  if (min(num_clu != 2)) {
+    stop("The minimal number of clusters must be set to two.")
   }
-  return(results)
+  
+  if (sum((num_clu - seq(clu_low, clu.high))^2) != 0) {
+    clusters <- clusters[ ,order(num_clu)]
+    num_clu <- sapply(clusters, function(x) length(unique(x)))
+    if (sum((num_clu - seq(clu_low, clu.high))^2) != 0) {
+      stop("In the 'clusters' parameter, a sequence of cluster memberships is not provided.")
+    }
+  }
+  
+  
+    #creation of set of 3D matrices
+    M <- list()
+    for (i in clu_low:clu.high) {
+      A <- list()
+      A1 <- list()
+      MMM <- array(0,dim=c(max_num_cat,i,num_var))
+      M1 <- array(0,dim=c(max_num_cat,1,num_var))
+      
+      for (j in 1:num_var) {
+        A[[j]] <- table(data[, j], clusters[,i - clu_low + 1])
+        A1[[j]] <- rowSums(A[[j]])
+      }
+      
+      for (j in 1:num_var) {
+        MMM[1:nrow(A[[j]]), 1:ncol(A[[j]]), j] <- A[[j]]
+        M1[1:nrow(A[[j]]),,j] <- A1[[j]]
+      }
+      M[[i-clu_low+2]] <- MMM
+    }
+    
+    # to include one-cluster solution into the matrix
+    M[[1]] <- M1
+    
+    #evaluation results
+    results <- EVAL(M)
+    results1 <- results[[1]]
+    results2 <- results[[2]]
+    
+  
+  list <- list(eval = results1, opt = results2)
+  
+  return(list)
 }

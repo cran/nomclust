@@ -2,52 +2,40 @@
 % Please edit documentation in R/sm.R
 \name{sm}
 \alias{sm}
-\title{Simple Matching Coefficient}
+\title{Simple Matching Coefficient (SM)}
 \usage{
 sm(data)
 }
 \arguments{
-\item{data}{data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 \cr
 }
 \description{
-The simple matching coefficient (Sokal, 1958) represents the simplest way for measuring of similarity. It does not impose any weigts.
-By a given variable, it assigns value 1 in case of match and value 0 otherwise.
-Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-\code{1/S-1}.\cr
-\cr              
-The use and evaluation of clustering with this measure can be found e.g. in (Sulc and Rezankova, 2014) or (Sulc, 2015).
-\cr
+A function for calculation of a proximity (dissimilarity) matrix based on the SM similarity measure.
+}
+\details{
+The simple matching coefficient (Sokal, 1958) represents the simplest way of measuring similarity. It does not impose any weights.
+By a given variable, it assigns the value 1 in case of match and value 0 otherwise.
 }
 \examples{
-#sample data
+# sample data
 data(data20)
-# Creation of proximity matrix
-prox_sm <- sm(data20)
+
+# dissimilarity matrix calculation
+prox.sm <- sm(data20)
 
 }
 \references{
-Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
+Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
 In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
  \cr
  \cr
-Sokal, R., Michener, C. (1958). A statistical method for evaluating systematic relationships. In: Science bulletin, 38(22),
+Sokal R., Michener C. (1958). A statistical method for evaluating systematic relationships. In: Science bulletin, 38(22),
 The University of Kansas.  
  \cr
- \cr
-Sulc, Z. (2015). Application of Goodall's and Lin's similarity measures in hierarchical clustering.
-In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomica, 2015, p. 112-118. Available at:
-\url{http://fis.vse.cz/wp-content/uploads/2015/01/DD_FIS_2015_CELY_SBORNIK.pdf}.
-\cr
-\cr
-Sulc, Z. and Rezankova, H. (2014). Evaluation of recent similarity measures for categorical data.
-In: AMSE. Wroclaw: Wydawnictwo Uniwersytetu Ekonomicznego we Wroclawiu, p. 249-258.
-Available at: \url{http://www.amse.ue.wroc.pl/papers/Sulc,Rezankova.pdf}.
 }
 \seealso{
 \code{\link[nomclust]{eskin}},

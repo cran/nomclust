@@ -2,46 +2,38 @@
 % Please edit documentation in R/good2.R
 \name{good2}
 \alias{good2}
-\title{Goodall 2 Measure}
+\title{Goodall 2 (G2) Measure}
 \usage{
 good2(data)
 }
 \arguments{
-\item{data}{data frame with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 \cr
 }
 \description{
-The Goodall 2 similarity measure was firstly introduced in (Boriah et al., 2008).                               
-The measure assigns higher similarity to infrequent matches under condition
-that there are also other categories, which are even less frequent than the examined one.
-Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-\code{1/S-1}.\cr
-\cr                                       
-The use and evaluation of clustering with this measure can be found e.g. in (Sulc, 2015).
+A function for calculation of a proximity (dissimilarity) matrix based on the G2 similarity measure.
+}
+\details{
+The Goodall 2 similarity measure was presented in (Boriah et al., 2008). It is a simple modification of the original Goodall measure (Goodall, 1966).                         
+The measure assigns weight to infrequent matches under the condition that there are also other categories, which are even less frequent than the examined one.
 }
 \examples{
-#sample data
+# sample data
 data(data20)
-# Creation of proximity matrix
-prox_goodall_2 <- good2(data20)
+
+# dissimilarity matrix calculation
+prox.good2 <- good2(data20)
 
 }
 \references{
-Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
+Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
 In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
-\cr
-\cr
-Goodall, V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
-\cr
-\cr
-Sulc, Z. (2015). Application of Goodall's and Lin's similarity measures in hierarchical clustering.
-In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomica, 2015, p. 112-118. Available at:
-\url{http://fis.vse.cz/wp-content/uploads/2015/01/DD_FIS_2015_CELY_SBORNIK.pdf}.
+ \cr
+ \cr
+Goodall V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
 }
 \seealso{
 \code{\link[nomclust]{eskin}},

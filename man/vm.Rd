@@ -2,38 +2,35 @@
 % Please edit documentation in R/vm.R
 \name{vm}
 \alias{vm}
-\title{Variable Mutability measure}
+\title{Variable Mutability (VM) measure}
 \usage{
 vm(data)
 }
 \arguments{
-\item{data}{data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 \cr
 }
 \description{
-The Variable Mutability similarity measure was introduced in (Sulc and Rezankova, 2015).
-It treats similarity between two categories according to within-cluster variability expressed by the Gini coefficient (mutability).
-The novel similarity measures praise more the match of two categories in a variable with high variability, because it is rarer,
-than the match in a low-variability variable.
-Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-\code{1/S-1}.\cr
+A function for calculation of a proximity (dissimilarity) matrix based on the VM similarity measure.
 \cr
+}
+\details{
+The Variable Mutability similarity measure was introduced in (Sulc and Rezankova, 2019).
+It treats the similarity between two categories based on the within-cluster variability expressed by the normalized mutability. The measure assigns higher weights to rarer categories.
 }
 \examples{
 #sample data
 data(data20)
-# Creation of proximity matrix
-prox_vm <- vm(data20)
+
+# dissimilarity matrix calculation
+prox.vm <- vm(data20)
 
 }
 \references{
-Sulc, Z. and Rezankova H. (2015). Novel similarity measures for categorical data based on mutability and entropy.
- Conference of the International Federation of Classification Societies. Bologna: Ospitalia, p. 209.
+Sulc Z. and Rezankova H. (2019). Comparison of Similarity Measures for Categorical Data in Hierarchical Clustering. Journal of Classification. 2019, 35(1), p. 58-72. DOI: 10.1007/s00357-019-09317-5.
 }
 \seealso{
 \code{\link[nomclust]{eskin}},

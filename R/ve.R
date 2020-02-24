@@ -1,24 +1,24 @@
-#' Variable Entropy measure
+#' Variable Entropy (VE) Measure
 #' 
-#' @description The Variable Entropy similarity measure was introduced in (Sulc and Rezankova, 2015).
-#' It treats similarity between two categories according to within-cluster variability expressed by the entropy.
-#' The novel similarity measures praise more the match of two categories in a variable with high variability, because it is rarer,
-#' than the match in a low-variability variable.
-#' Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-#' an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-#' \code{1/S-1}.\cr
-#' \cr                                                           
+#' @description A function for calculation of a proximity (dissimilarity) matrix based on the VE similarity measure.
 #'  
-#' @param data data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
+#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
 #' 
-#' @return Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-#' between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+#' @return The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 #' \cr
 #' 
+#' @details The Variable Entropy similarity measure was introduced in (Sulc and Rezankova, 2019). It treats
+#' the similarity between two categories based on the within-cluster variability expressed by the normalized entropy.
+#' The measure assigns higher weights to rare categories.
+#' 
 #' @references
-#' Sulc, Z. and Rezankova H. (2015). Novel similarity measures for categorical data based on mutability and entropy.
-#'  Conference of the International Federation of Classification Societies. Bologna: Ospitalia, p. 209.
-#'
+#' Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
+#' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
+#'  \cr
+#'  \cr
+#' Sulc Z. and Rezankova H. (2019). Comparison of Similarity Measures for Categorical Data in Hierarchical Clustering. Journal of Classification. 2019, 35(1), p. 58-72. DOI: 10.1007/s00357-019-09317-5.
+#'  
+#'  
 #' @seealso
 #' \code{\link[nomclust]{eskin}},
 #' \code{\link[nomclust]{good1}},
@@ -36,10 +36,11 @@
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
 #' @examples
-#' #sample data
+#' # sample data
 #' data(data20)
-#' # Creation of proximity matrix
-#' prox_ve <- ve(data20)
+#' 
+#' # dissimilarity matrix calculation
+#' prox.ve <- ve(data20)
 #' 
 #' @export 
 
@@ -48,22 +49,14 @@ ve <- function(data) {
   r <- nrow(data)
   s <- ncol(data)
   
-  #recoding variables
-  num_var <- ncol(data)
-  num_row <- nrow(data)
-  data2 <- matrix(data = 0, nrow = num_row, ncol = num_var)
-  for (k in 1:num_var) {
-    categories <- unique(data[, k])
-    cat_new <- 1:length(categories)
-    for (l in 1:length(categories)) {
-      for (i in 1:num_row) {
-        if (data[i, k] == categories[l]) {
-          data2[i, k] <- cat_new[l]
-        }
-      }
-    }
-  }
-  data <- data.frame(data2)
+  rnames <- row.names(data)
+  
+  # recoding everything to factors and then to numeric values
+  indx <- sapply(data, is.factor)
+  data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
+  data <- as.data.frame(unclass(data))
+  data <- sapply(data, function(x) as.numeric(x))
+  data <- as.data.frame(data)
   
   
   #number of categories
@@ -83,6 +76,7 @@ ve <- function(data) {
   
   agreement <- vector(mode="numeric", length=s)
   ve <- matrix(data=0,nrow=r,ncol=r)
+  row.names(ve) <- rnames
   
   for (i in 1:(r-1)) {
     for (j in (1+i):r) {

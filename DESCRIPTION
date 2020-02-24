@@ -1,19 +1,21 @@
 Package: nomclust
-Title: Hierarchical Nominal Clustering Package
-Authors@R: c(person("Zdenek", "Sulc", role = c("aut", "cre"),
-		     email = "zdenek.sulc@vse.cz"),
+Title: Hierarchical Cluster Analysis of Nominal Data
+Authors@R: c(person("Zdenek", "Sulc", role = c("aut", "cre"), email = "zdenek.sulc@vse.cz"),
+	      person("Jana", "Cibulkova", role = "aut", email = "jana.cibulkova@vse.cz"),
 	      person("Hana", "Rezankova", role = "aut", email = "hana.rezankova@vse.cz"))
 Author: Zdenek Sulc [aut, cre],
-    Hana Rezankova [aut]
+  Jana Cibulkova [aut],
+  Hana Rezankova [aut]
 Maintainer: Zdenek Sulc <zdenek.sulc@vse.cz>
-Version: 1.1.1106
-Date: 2017-6-6
-Description: Package for hierarchical clustering of objects characterized by
-    nominal variables.
-Imports: cluster, dummies
+Version: 2.1.3
+Date: 2020-02-24
+Description: Similarity measures for hierarchical clustering of objects characterized by
+    nominal (categorical) variables. Evaluation criteria for nominal data clustering.
+Depends: cluster, plyr, methods
 License: GPL (>= 2)
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 NeedsCompilation: no
-Packaged: 2017-06-06 14:41:21 UTC; zdenek
+Packaged: 2020-02-24 17:10:24 UTC; zdenek
+Encoding: UTF-8
 Repository: CRAN
-Date/Publication: 2017-06-06 14:51:41 UTC
+Date/Publication: 2020-02-24 17:30:02 UTC

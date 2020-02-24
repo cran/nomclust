@@ -2,46 +2,38 @@
 % Please edit documentation in R/eskin.R
 \name{eskin}
 \alias{eskin}
-\title{Eskin Measure}
+\title{Eskin (ES) Measure}
 \usage{
 eskin(data)
 }
 \arguments{
-\item{data}{data frame with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-Function returns a matrix of the size \code{n x n}, where \code{n} is a number of objects in original data. The matrix contains proximities
-between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 \cr
 }
 \description{
-The Eskin similarity measure was proposed by Eskin et al. (2002). It is constructed to assign
-higher weights to mismatches on variables with more categories, see (Boriah et al., 2008).                                                                       
-Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-\code{1/S-1}.\cr
-\cr                                                             
-The use and evaluation of clustering with this measure can be found e.g. in (Sulc and Rezankova, 2014).
-\cr
+A function for calculation of a proximity (dissimilarity) matrix based on the ES similarity measure.
+}
+\details{
+The Eskin similarity measure was proposed by Eskin et al. (2002) and examined by Boriah et al., (2008). It is constructed to assign
+higher weights to mismatches on variables with more categories.
 }
 \examples{
-#sample data
+# sample data
 data(data20)
-# Creation of proximity matrix
-prox_eskin <- eskin(data20)
+
+# dissimilarity matrix calculation
+prox.eskin <- eskin(data20)
 }
 \references{
-Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
- In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
+Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
+In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
  \cr
  \cr
-Eskin, E., Arnold, A., Prerau, M., Portnoy, L. and Stolfo, S. (2002). A geometric framework for unsupervised anomaly detection.
+Eskin E., Arnold A., Prerau M., Portnoy L. and Stolfo S. (2002). A geometric framework for unsupervised anomaly detection.
 In D. Barbara and S. Jajodia (Eds): Applications of Data Mining in Computer Security, p. 78-100. Norwell: Kluwer Academic Publishers.
-\cr
-\cr
-Sulc, Z. and Rezankova, H. (2014). Evaluation of recent similarity measures for categorical data.
-In: AMSE. Wroclaw: Wydawnictwo Uniwersytetu Ekonomicznego we Wroclawiu, p. 249-258.
-Available at: \url{http://www.amse.ue.wroc.pl/papers/Sulc,Rezankova.pdf}.
 }
 \seealso{
 \code{\link[nomclust]{good1}},

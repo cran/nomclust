@@ -2,47 +2,58 @@
 % Please edit documentation in R/nomprox.R
 \name{nomprox}
 \alias{nomprox}
-\title{Nominal Clustering based on a Proximity Matrix}
+\title{Hierarchical Cluster Analysis for Nominal Data Based on a Proximity Matrix}
 \usage{
-nomprox(data, prox_matrix, clu_low = 2, clu_high = 6, eval = TRUE,
-  method = "complete")
+nomprox(diss, data = NULL, method = "average", clu.high = 6, eval = TRUE)
 }
 \arguments{
-\item{data}{data frame or a matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{diss}{A proximity matrix or a dist object calculated from the dataset defined in a parameter \code{data}.}
 
-\item{prox_matrix}{full proximity matrix computed using any similarity measure from the data analyzed.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 
-\item{clu_low}{numeric value expressing the lower bound for number of cluster solutions.}
+\item{method}{A \emph{character} string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
 
-\item{clu_high}{numeric value expressing the higher bound for number of cluster solutions.}
+\item{clu.high}{A \emph{numeric} value expressing the maximal number of cluster for which the cluster memberships variables are produced.}
 
-\item{eval}{logical operator; if TRUE, there is performed an evaluation of clustering results}
-
-\item{method}{character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
+\item{eval}{A \emph{logical} operator; if TRUE, evaluation of clustering results is performed.}
 }
 \value{
-Function returns a data frame, where the rows express a serie of cluster solutions and columns
-clustering evaluation statistics in a following order: \code{WCM}, \code{WCE}, \code{PSTau}, \code{PSU}, \code{PSFM}, \code{PSFE}.
+The function returns a list with up to three components:
+\cr
+\cr
+The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a \emph{list}.
+\cr
+\cr
+The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
+To see them all in once, the form of a \emph{data.frame} is more appropriate.
+\cr
+\cr
+The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
 }
 \description{
-Based on the original dataset and the proximity matrix, the function computes cluster membership variables for a user-defined number of cluster solutions. 
-Optionally, it evaluates clustering results using six evaluation criteria based on the within-cluster variability:
-Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-Pseudo tau coefficient (PSTau), Pseudo uncertainty coefficient (PSU) and Pseudo F, Indices based on the mutability (PSFM) and the entropy (PSFE).
+The \code{nomprox()} function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
+It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by seven evaluation indices, see (Sulc et al., 2018).
 }
 \examples{
-#sample data
+# sample data
 data(data20)
-#computation of a proximity matrix using the iof similarity measure
-matrix <- iof(data20)
-#creation of a dataset with cluster memberships
-hca <- nomprox(data20, matrix, clu_high = 5, method = "complete")
-#getting evaluation statistics
-eval <- hca$eval
-#getting cluster membership variables
-mem <- hca$mem 
+
+# computation of a dissimilarity matrix using the iof similarity measure
+diss.matrix <- iof(data20)
+
+# creating an object with results of hierarchical clustering 
+hca.object <- nomprox(diss = diss.matrix, data = data20, method = "complete",
+ clu.high = 5, eval = TRUE)
+
 
 }
+\references{
+Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
+}
 \seealso{
-\code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{evalclust}}.
+\code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{evalclust}}, \code{\link[nomclust]{eval.plot}}.
+}
+\author{
+Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
 }

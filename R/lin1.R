@@ -1,6 +1,13 @@
-#' Lin 1 Measure
+#' Lin 1 (LIN1) Measure
 #' 
-#' @description The Lin 1 similarity measure was firstly introduced in (Boriah et al., 2008). In has
+#' @description A function for calculation of a proximity (dissimilarity) matrix based on the LIN1 similarity measure.
+#'                                        
+#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' 
+#' @return The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
+#' \cr
+#'
+#' @details The Lin 1 similarity measure was introduced in (Boriah et al., 2008) as a modification of the original Lin measure (Lin, 1998). In has
 #' a complex system of weights. In case of mismatch, lower similarity is assigned if either
 #' the mismatching values are very frequent or their relative frequency is in between the relative
 #' frequencies of mismatching values. Higher similarity is assigned if the mismatched categories
@@ -8,32 +15,16 @@
 #' lower similarity is given for matches on frequent categories or matches on categories
 #' that have many other values of the same frequency. Higher similarity is given to matches
 #' on infrequent categories.
-#'                                        
-#' Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-#' an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-#' \code{1/S-1}. After this transformation, it may
-#' happen that some values in a proximity matrix get the value \code{-Inf}. Therefore, the following adjustment is applied:
-#' \code{max(prox)+1}, where \code{prox} is a proximity matrix.
-#' \cr
-#' \cr
-#'                                        
-#' The use and evaluation of clustering with this measure can be found e.g. in (Sulc, 2015).
-#'  
-#' @param data data frame with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.
 #' 
-#' @return Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-#' between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
-#' \cr
-#'
 #' @references
-#' Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-#'  In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
+#' Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
+#' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
 #'  \cr
 #'  \cr
-#' Sulc, Z. (2015). Application of Goodall's and Lin's similarity measures in hierarchical clustering.
-#' In Sbornik praci vedeckeho seminare doktorskeho studia FIS VSE. Praha: Oeconomica, 2015, p. 112-118. Available at:
-#' \url{http://fis.vse.cz/wp-content/uploads/2015/01/DD_FIS_2015_CELY_SBORNIK.pdf}.
-#'
+#' Lin D. (1998). An information-theoretic definition of similarity.
+#' In: ICML '98: Proceedings of the 15th International Conference on Machine Learning. San Francisco, p. 296-304.
+#' 
+#' 
 #' @seealso
 #' \code{\link[nomclust]{eskin}},
 #' \code{\link[nomclust]{good1}},
@@ -51,10 +42,11 @@
 #' @author Zdenek Sulc. \cr Contact: \email{zdenek.sulc@@vse.cz}
 #' 
 #' @examples
-#' #sample data
+#' # sample data
 #' data(data20)
-#' # Creation of proximity matrix
-#' prox_lin1 <- lin1(data20)
+#' 
+#' # dissimilarity matrix calculation
+#' prox.lin1 <- lin1(data20)
 #'
 #' @export 
 
@@ -64,22 +56,14 @@ lin1 <- function(data) {
   r <- nrow(data)
   s <- ncol(data)
   
-  #recoding variables
-  num_var <- ncol(data)
-  num_row <- nrow(data)
-  data2 <- matrix(data = 0, nrow = num_row, ncol = num_var)
-  for (k in 1:num_var) {
-    categories <- unique(data[, k])
-    cat_new <- 1:length(categories)
-    for (l in 1:length(categories)) {
-      for (i in 1:num_row) {
-        if (data[i, k] == categories[l]) {
-          data2[i, k] <- cat_new[l]
-        }
-      }
-    }
-  }
-  data <- data.frame(data2)
+  rnames <- row.names(data)
+  
+  # recoding everything to factors and then to numeric values
+  indx <- sapply(data, is.factor)
+  data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
+  data <- as.data.frame(unclass(data))
+  data <- sapply(data, function(x) as.numeric(x))
+  data <- as.data.frame(data)
   
   
   freq.abs <- freq.abs(data)
@@ -90,6 +74,7 @@ lin1 <- function(data) {
   
   agreement <- vector(mode="numeric", length=s)
   lin1 <- matrix(data=0,nrow=r,ncol=r)
+  row.names(lin1) <- rnames
   weights <- vector(mode="numeric", length=s)
 
   for (i in 1:(r-1)) {

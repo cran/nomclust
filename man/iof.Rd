@@ -7,44 +7,36 @@
 iof(data)
 }
 \arguments{
-\item{data}{data frame with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 \cr
 }
 \description{
-The IOF (Inverse Occurrence Frequency) measure was originally constructed for the text mining,
-see (Sparck-Jones, 1972), later, it was adjusted for categorical variables.
-The measure assigns higher similarity to mismatches on less frequent values and vice versa.                                  
-Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-\code{1/S-1}.\cr
-\cr               
-                                       
-The use and evaluation of clustering with this measure can be found e.g. in (Sulc and Rezankova, 2014).
+A function for calculation of a proximity (dissimilarity) matrix based on the IOF similarity measure.
 \cr
 }
+\details{
+The IOF (Inverse Occurrence Frequency) measure was originally constructed for the text mining tasks,
+see (Sparck-Jones, 1972), later, it was adjusted for categorical variables, see (Boriah et al., 2008).
+The measure assigns higher weight to mismatches on less frequent values and vice versa.
+}
 \examples{
-#sample data
+# sample data
 data(data20)
-# Creation of proximity matrix
-prox_iof <- iof(data20)
+
+# dissimilarity matrix calculation
+prox.iof <- iof(data20)
 
 }
 \references{
-Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
+Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
 In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
  \cr
  \cr
-Spark-Jones, K. (1972). A statistical interpretation of term specificity and its application in retrieval.
+Spark-Jones K. (1972). A statistical interpretation of term specificity and its application in retrieval.
 In Journal of Documentation, 28(1), 11-21. Later: Journal of Documentation, 60(5) (2002), 493-502.
-\cr
-\cr
-Sulc, Z. and Rezankova, H. (2014). Evaluation of recent similarity measures for categorical data.
-In: AMSE. Wroclaw: Wydawnictwo Uniwersytetu Ekonomicznego we Wroclawiu, p. 249-258.
-Available at: \url{http://www.amse.ue.wroc.pl/papers/Sulc,Rezankova.pdf}.
 }
 \seealso{
 \code{\link[nomclust]{eskin}},

@@ -2,42 +2,53 @@
 % Please edit documentation in R/evalclust.R
 \name{evalclust}
 \alias{evalclust}
-\title{Evaluation of the Clustering}
+\title{Evaluation of Hierarchical Clustering for Nominal Data}
 \usage{
-evalclust(data, num_var, clu_low = 2, clu_high = 6)
+evalclust(data, clusters)
 }
 \arguments{
-\item{data}{data frame or matrix with cases in rows and variables in colums. First \code{m1} variables are the
-original data used for clustering, the next \code{m2} variables express the cluster memberships in an increasing
-way (e.g. from clu_2 to clu_6).}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 
-\item{num_var}{numeric value which determines how many variables in a dataset were used for the clustering.}
-
-\item{clu_low}{numeric value expressing the lower bound for number of cluster solutions.}
-
-\item{clu_high}{numeric value expressing the higher bound for number of cluster solutions.}
+\item{clusters}{A \emph{data.frame} or a \emph{list} of cluster memberships in a form of a sequence from the two-cluster solution to the maximal-cluster solution.}
 }
 \value{
-Function returns a data frame, where the rows express a serie of cluster solutions and columns
-clustering evaluation statistics in a following order: \code{WCM}, \code{WCE}, \code{PSTau}, \code{PSU}, \code{PSFM}, \code{PSFE}.
+The function returns a \emph{list} with two components.
+\cr
+\cr
+The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
+To see them all in once, the form of a \emph{data.frame} is more appropriate.
+\cr
+\cr
+The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
 }
 \description{
-The function evaluates clustering results no matter which clustering method they were obtained by.
-The clusters are evaluated from a point of view of the within-cluster variability by the following indices:
-Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-Pseudo tau coefficient (PSTau), Pseudo uncertainty coefficient (PSU) and Pseudo F, Indices based on the mutability (PSFM) and the entropy (PSFE).
+The \bold{evalclust} function calculates a set of evaluation criteria, see (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
+It is primarily focused on the evaluation of hierarchical clustering results obtained by similarity measures different from the ones that occur in the \bold{nomclust} package.
+Thus, it can serve for comparison of various similarity measures for categorical data.
 }
 \examples{
-#sample data
+# sample data
 data(data20)
-#creation of a dataset with cluster memberships
-data_clu <- nomclust(data20, iof, clu_high = 7)
-#binding an original dataset to cluster memberships variables
-data_clu2 <- cbind(data20, data_clu$mem)
-#evaluation of created clusters
-evaluation <- evalclust(data_clu2, 5, clu_high = 7)
+
+# creating an object with results of hierarchical clustering
+hca.object <- nomclust(data20, measure = "iof", method = "average", clu.high = 7)
+
+# the cluster memberships
+data20.clu <- hca.object$mem
+
+# obtaining evaluation criteria for the provided dataset and cluster memberships
+data20.eval <- evalclust(data20, clusters = data20.clu)
+
+
 
 }
+\references{
+Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
+}
 \seealso{
-\code{\link[nomclust]{nomclust}}.
+\code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{nomprox}}, \code{\link[nomclust]{eval.plot}}.
+}
+\author{
+Zdenek Sulc. \cr Contact: \email{zdenek.sulc@vse.cz}
 }

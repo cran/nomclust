@@ -21,3 +21,9 @@ freq.abs <- function(data) {
   }
   return(freq.table)
 }
+
+
+
+  
+
+

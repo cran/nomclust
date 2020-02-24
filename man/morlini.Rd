@@ -2,47 +2,35 @@
 % Please edit documentation in R/morlini.R
 \name{morlini}
 \alias{morlini}
-\title{Morlini and Zani's Measure S2}
+\title{Morlini and Zani's (MZ) Measure}
 \usage{
 morlini(data)
 }
 \arguments{
-\item{data}{data frame or matrix with cases in rows and variables in colums. Cases are characterized by nominal (categorical) variables coded as numbers.}
+\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-Function returns a matrix of the size \code{n x n}, where \code{n} is the number of objects in original data. The matrix contains proximities
-between all pairs of objects. It can be used in hierarchical cluster analyses (HCA), e.g. in \code{\link[cluster]{agnes}}.
+The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
 \cr
 }
 \description{
-The S2 measure was proposed by Morlini and Zani (2012)
-and it is based on a transformed dataset, which contains only binary variables (dummy coding).
-Hierarchical clustering methods require a proximity (dissimilarity) matrix instead of a similarity matrix as
-an entry for the analysis; therefore, dissimilarity \code{D} is computed from similarity \code{S} according the equation
-\code{1/S-1}.\cr
-\cr              
-The use and evaluation of clustering with this measure can be found e.g. in (Sulc and Rezankova, 2014) or (Sulc, 2015).
+A function for calculation of a proximity (dissimilarity) matrix based on the MZ similarity measure.
 \cr
 }
+\details{
+The MZ measure was originally introduced by Morlini and Zani (2012) under the name S2. The S2 measure was proposed. It is based on a binary-transformed dataset, so the \bold{morlini} function must first create dummy-coded variables.
+The measure uses relative frequencies of categories of binary-coded variables, and it assigns higher weights to infrequent categories.
+}
 \examples{
-#sample data
+# sample data
 data(data20)
-# Creation of proximity matrix
-prox_morlini <- morlini(data20)
+
+# dissimilarity matrix calculation
+prox.morlini <- morlini(data20)
 
 }
 \references{
-Boriah, S., Chandola and V., Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
-In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
- \cr
- \cr
-Morlini, I., Zani, S. (2012). A new class of weighted similarity indices using polytomous variables.
-In Journal of Classification, 29(2), p. 199-226.
-\cr
-\cr
-Sulc, Z. and Rezankova, H. (2014). Evaluation of recent similarity measures for categorical data.
-In: AMSE. Wroclaw: Wydawnictwo Uniwersytetu Ekonomicznego we Wroclawiu, p. 249-258.
-Available at: \url{http://www.amse.ue.wroc.pl/papers/Sulc,Rezankova.pdf}.
+Morlini I., Zani S. (2012). A new class of weighted similarity indices using polytomous variables. Journal of Classification, 29(2), p. 199-226.
 }
 \seealso{
 \code{\link[nomclust]{eskin}},
