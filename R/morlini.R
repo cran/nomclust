@@ -46,9 +46,16 @@
 morlini <- function(data) {
   
   s <- ncol(data)
-  num_cat <- sapply(data, function(x) length(unique(x)))
+  #num_cat <- sapply(data, function(x) length(unique(x)))
   
   rnames <- row.names(data)
+  
+  # recoding everything to factors and then to numeric values
+  indx <- sapply(data, is.factor)
+  data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
+  data <- as.data.frame(unclass(data))
+  data <- sapply(data, function(x) as.numeric(x))
+  data <- as.data.frame(data)
   
   #with dummies
   #data_dummy <- dummy.data.frame(data, dummy.classes ="ALL",omit.constants = F)

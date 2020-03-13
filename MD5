@@ -1,4 +1,4 @@
-3ee18d122a9d2e2c95020578ecc8d770 *DESCRIPTION
+550775ca133c77fc091b88f1b48fac05 *DESCRIPTION
 c609e147d52e2369f48c91c6a9f1255e *NAMESPACE
 6e888297e614dafc0cb8d22b4e2867e8 *R/EVAL.R
 712b15bb56d23d8dcb02822418521105 *R/dend.plot.R
@@ -21,7 +21,7 @@ dbe2301c285e0c6c982c20bbe387e3a8 *R/good3_fx.R
 b264c40ce28fa350875534a690b4ee08 *R/lin1.R
 8a8aa92212c969b5fd0cec68c0428c1f *R/lin1_fx.R
 840c1248db110df4654f368eee71b56e *R/lin_fx.R
-408e491b5e5a568a2319ef41155b923f *R/morlini.R
+a57ff67221e90071fdbd0bd0c06151e5 *R/morlini.R
 ca77aa85e6dadc373dd9f29c949b0daa *R/morlini_fx.R
 b7339c458321b9000dbb04a69d38f7bb *R/nomclust.R
 6b86af27cd3cb545120aebaf2887165f *R/nomprox.R
@@ -33,8 +33,8 @@ b7339c458321b9000dbb04a69d38f7bb *R/nomclust.R
 912b80041c7f4478d9c1de2a031f2557 *R/ve_fx.R
 ba8d78382998f2544c6f1c4d86ab67c3 *R/vm.R
 f3df1b511b25fff919ac48ad4798fc7e *R/vm_fx.R
-ba3f1e0f6922e4cad2c268908bf96c1d *data/CA.methods.RData
-e0212e36c6cb7714bf6a57b54cf7e72b *data/data20.RData
+0e567d5379444ab788cce6b985075d98 *data/CA.methods.RData
+5653b0dccb1f100c1217ce1e4fb3211b *data/data20.RData
 d947702933b497ccdb5093b02c278a1d *data/datalist
 b9e618d04f609afe9275bfdd81687b49 *man/CA.methods.Rd
 11aea7a8500aec2e80a725b24595fc20 *man/data20.Rd
