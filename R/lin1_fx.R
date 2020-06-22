@@ -4,8 +4,8 @@ lin1_fx <- function(data, freq) {
   s <- ncol(data)
   
   freq.rel <- freq/sum(freq[,1])
-  freq.ln <- log(freq.rel)
-  freq.ln[freq.ln == -Inf] <- 0
+  #freq.ln <- log(freq.rel)
+  #freq.ln[freq.ln == -Inf] <- 0
   
   
   agreement <- vector(mode="numeric", length=s)
@@ -19,19 +19,19 @@ lin1_fx <- function(data, freq) {
         d <- data[j,k]
         if (data[i,k] == data[j,k]) {
           logic <- freq.rel[,k] == freq.rel[c,k]
-          agreement[k] <- sum(logic * freq.ln[,k])
-          weights[k] <- sum(logic * freq.ln[,k])
+          agreement[k] <- log(sum(logic * freq.rel[,k]))
+          weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
         }
         else {
           if (freq.rel[c,k] >= freq.rel[d,k]) {
             logic <- freq.rel[,k] >= freq.rel[d,k] & freq.rel[,k] <= freq.rel[c,k]
             agreement[k] <- 2*log(sum(logic * freq.rel[,k]))
-            weights[k] <- sum(logic * freq.ln[,k])
+            weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
           }
           else {
             logic <- freq.rel[,k] >= freq.rel[c,k] & freq.rel[,k] <= freq.rel[d,k]
             agreement[k] <- 2*log(sum(logic * freq.rel[,k]))
-            weights[k] <- sum(logic * freq.ln[,k])
+            weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
           }
         }
       }
@@ -39,6 +39,6 @@ lin1_fx <- function(data, freq) {
       lin1[j,i] <- lin1[i,j]
     }
   }
-  lin1[lin1 == -Inf] <- max(lin1) + 1
+  #lin1[lin1 == -Inf] <- max(lin1) + 1
   return(lin1)
 }

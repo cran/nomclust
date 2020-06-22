@@ -49,6 +49,11 @@
 
 iof <- function(data) {
   
+  # dealing with the missing data
+  if (sum(is.na(data)) > 0) {
+    stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
+  }
+  
   r <- nrow(data)
   s <- ncol(data)
   

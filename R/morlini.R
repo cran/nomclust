@@ -45,6 +45,11 @@
 
 morlini <- function(data) {
   
+  # dealing with the missing data
+  if (sum(is.na(data)) > 0) {
+    stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
+  }
+  
   s <- ncol(data)
   #num_cat <- sapply(data, function(x) length(unique(x)))
   

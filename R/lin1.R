@@ -53,6 +53,11 @@
 
 lin1 <- function(data) {
   
+  # dealing with the missing data
+  if (sum(is.na(data)) > 0) {
+    stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
+  }
+  
   r <- nrow(data)
   s <- ncol(data)
   
@@ -68,8 +73,8 @@ lin1 <- function(data) {
   
   freq.abs <- freq.abs(data)
   freq.rel <- freq.abs/r
-  freq.ln <- log(freq.rel)
-  freq.ln[freq.ln == -Inf] <- 0
+  #freq.ln <- log(freq.rel)
+  #freq.ln[freq.ln == -Inf] <- 0
   
   
   agreement <- vector(mode="numeric", length=s)
@@ -84,19 +89,19 @@ lin1 <- function(data) {
         d <- data[j,k]
         if (data[i,k] == data[j,k]) {
           logic <- freq.rel[,k] == freq.rel[c,k]
-          agreement[k] <- sum(logic * freq.ln[,k])
-          weights[k] <- sum(logic * freq.ln[,k])
+          agreement[k] <- log(sum(logic * freq.rel[,k]))
+          weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
         }
         else {
           if (freq.rel[c,k] >= freq.rel[d,k]) {
             logic <- freq.rel[,k] >= freq.rel[d,k] & freq.rel[,k] <= freq.rel[c,k]
             agreement[k] <- 2*log(sum(logic * freq.rel[,k]))
-            weights[k] <- sum(logic * freq.ln[,k])
+            weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
           }
           else {
             logic <- freq.rel[,k] >= freq.rel[c,k] & freq.rel[,k] <= freq.rel[d,k]
             agreement[k] <- 2*log(sum(logic * freq.rel[,k]))
-            weights[k] <- sum(logic * freq.ln[,k])
+            weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
           }
         }
       }
@@ -104,6 +109,6 @@ lin1 <- function(data) {
       lin1[j,i] <- lin1[i,j]
     }
   }
-  lin1[lin1 == -Inf] <- max(lin1) + 1
+  #lin1[lin1 == -Inf] <- max(lin1) + 1
   return(lin1)
 }

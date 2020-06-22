@@ -57,6 +57,11 @@ evalclust <- function (data, clusters) {
     stop("The dataset and the cluster membership variables are of different lengths.")
   }
   
+  # dealing with the missing data
+  if (sum(is.na(data)) > 0) {
+    stop("The evaluation CANNOT be run if the 'data' argument contains NA values.")
+  }
+  
   
   #if matrix, coerce to data.frame
   if(is.matrix(data) == 1) {

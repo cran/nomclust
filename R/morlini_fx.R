@@ -11,7 +11,7 @@ morlini_fx <- function(data, freq = NULL) {
   
   # dummy transformation of a data.frame
   data_dummy <- data.frame(row.names = row.names(data))
-  num_cat <- sapply(data, function(x) length(unique(x)))
+  #num_cat <- sapply(data, function(x) length(unique(x)))
   for (i in 1:length(num_cat)) {
     variable_set <- data.frame()
     for (j in 1:num_cat[i]) {

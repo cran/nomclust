@@ -60,7 +60,7 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
   
   if (is.null(data) == TRUE & eval == TRUE) {
     eval <- FALSE
-    print("The argument 'eval' was set to FALSE since the 'data' argument needed for evaluation criteria calculation was not provided.")
+    warning("The argument 'eval' was set to FALSE since the 'data' argument needed for evaluation criteria calculation was not provided.")
   }
   
   #number of clusters cannot exceed the parameter clu.high
@@ -78,12 +78,24 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
         stop("The argument 'diss' is not a square proximity matrix.")
   }
   
+  # dealing with the missing data
+  if (sum(is.na(diss)) > 0) {
+    stop("The dissimilarity matrix contains NA values. It is probably damaged.")
+  }
+  
+  
   if (eval == 1) {
     
     # check if the data dimensions correspond to the proximity matrx dimensions
     if (nrow(data) != nrow(diss)) {
       stop("The used dataset and the dissimilarity matrix are of different sizes.")
     }
+    
+    # dealing with the missing data
+    if (sum(is.na(data)) > 0) {
+      stop("The cluster analysis CANNOT be run if the 'data' argument contains NA values.")
+    }
+    
     
     # taking row.names from data
     rnames <- row.names(data)

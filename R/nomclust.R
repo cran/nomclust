@@ -136,7 +136,7 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
   # to prevent publication of a proximity matrix with unordered rows
   if (opt == TRUE & prox == TRUE) {
     opt <- FALSE
-    print("The time optimization method cannot be run if the proximity matrix is to be produced. The standard calculation method is used instead.")
+    warning("The time optimization method cannot be run if the proximity matrix is to be produced. The standard calculation method is used instead.")
   }
   
   # for which measures the optimizalization will be used
@@ -146,7 +146,7 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
       # print("Time optimalization in process.")
     } else if (measure %in% c("morlini")) {
       opt <- FALSE
-      print("The time optimization cannot be used with the 'morlini' similarity measure. The standard calculation method is used instead.")
+      warning("The time optimization cannot be used with the 'morlini' similarity measure. The standard calculation method is used instead.")
     } else {
       stop("Invalid name of the similarity measure.")
     }
@@ -159,6 +159,10 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
       }
   }
   
+  # dealing with the missing data
+  if (sum(is.na(data)) > 0) {
+    stop("The cluster analysis CANNOT be run if the 'data' argument contains NA values.")
+  }
   
   measure <- paste(measure, "_fx", sep = "")
   
