@@ -71,8 +71,8 @@ lin1 <- function(data) {
   data <- as.data.frame(data)
   
   
-  freq.abs <- freq.abs(data)
-  freq.rel <- freq.abs/r
+  abs.freq <- freq.abs(data)
+  freq.rel <- abs.freq/r
   #freq.ln <- log(freq.rel)
   #freq.ln[freq.ln == -Inf] <- 0
   
@@ -109,6 +109,6 @@ lin1 <- function(data) {
       lin1[j,i] <- lin1[i,j]
     }
   }
-  #lin1[lin1 == -Inf] <- max(lin1) + 1
+  lin1[lin1 == -Inf] <- max(lin1) + 1
   return(lin1)
 }

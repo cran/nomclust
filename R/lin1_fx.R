@@ -39,6 +39,6 @@ lin1_fx <- function(data, freq) {
       lin1[j,i] <- lin1[i,j]
     }
   }
-  #lin1[lin1 == -Inf] <- max(lin1) + 1
+  lin1[lin1 == -Inf] <- max(lin1) + 1
   return(lin1)
 }
