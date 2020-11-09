@@ -4,7 +4,7 @@
 #'  
 #' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
 #' 
-#' @return The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
+#' @return The function returns an object of class "dist".
 #' \cr
 #' 
 #' @details The simple matching coefficient (Sokal, 1958) represents the simplest way of measuring similarity. It does not impose any weights.
@@ -28,7 +28,6 @@
 #' \code{\link[nomclust]{iof}},
 #' \code{\link[nomclust]{lin}},
 #' \code{\link[nomclust]{lin1}},
-#' \code{\link[nomclust]{morlini}},
 #' \code{\link[nomclust]{of}},
 #' \code{\link[nomclust]{ve}},
 #' \code{\link[nomclust]{vm}}.
@@ -60,10 +59,8 @@ sm <- function(data) {
   
   # recoding everything to factors and then to numeric values
   indx <- sapply(data, is.factor)
-  data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
-  data <- as.data.frame(unclass(data))
-  data <- sapply(data, function(x) as.numeric(x))
-  data <- as.data.frame(data)
+  data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
+  data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
   
   agreement <- vector(mode="numeric", length=s)
   sm <- matrix(data=0,nrow=r,ncol=r)
@@ -83,5 +80,5 @@ sm <- function(data) {
       sm[j,i] <- sm[i,j]
     }
   }
-  return(sm)
+  return(as.dist(sm))
 }

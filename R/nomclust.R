@@ -1,14 +1,14 @@
 #' Hierarchical Cluster Analysis for Nominal Data
 #' 
 #' @description The \code{nomclust()} function runs hierarchical cluster analysis (HCA) with objects characterized by nominal (categorical) variables. It completely covers the clustering process, from the proximity matrix calculation to the evaluation of the quality of clustering.
-#' The function contains thirteen similarity measures for nominal data summarized in (Boriah et al., 2008) or introduced by Morlini and Zani in (Morlini and Zani, 2012), and by (Sulc and Rezankova, 2019). 
+#' The function contains twelve similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
 #' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by seven evaluation criteria, see (Sulc et al., 2018). The output of the \code{nomclust()} function may serve as an input for visualization functions in the \bold{nomclust} package.
 #' 
 #' 
 #' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
 #' 
 #' @param measure A \emph{character} string defining the similarity measure used for computation of proximity matrix in HCA:
-#' \code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"morlini"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.
+#' \code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.
 #' 
 #' @param method A \emph{character} string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.
 #' 
@@ -34,7 +34,7 @@
 #' The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
 #' \cr
 #' \cr
-#' The \code{prox} component contains the dissimilarity matrix in a form of a \emph{matrix}.
+#' The \code{prox} component contains the dissimilarity matrix in a form of the "dist" object.
 #' \cr
 #' \cr
 #' The \code{dend} component can be found in the output only together with the \code{prox} component. It contains all the necessary information for dendrogram creation.
@@ -43,9 +43,6 @@
 #'@references
 #' Boriah S., Chandola V. and Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
 #' In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
-#' \cr
-#' \cr
-#' Morlini I. and Zani S. (2012). A new class of weighted similarity indices using polytomous variables. Journal of Classification, 29(2), p. 199-226.
 #' \cr
 #' \cr
 #' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
@@ -80,7 +77,7 @@
 #' data20.mem <- as.data.frame(hca.object$mem)
 #' 
 #' # obtaining a proximity matrix
-#' data20.prox <- hca.object$prox
+#' data20.prox <- as.matrix(hca.object$prox)
 #' 
 #' # setting the maximal number of objects for which a proximity matrix is provided in the output to 30
 #' hca.object <- nomclust(data20, measure = "lin", method = "average",
@@ -115,6 +112,17 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
     stop("An invalid clustering method was chosen.")
   }
   
+  # legacy - morlini
+  if (measure == "morlini") {
+    stop("The 'morlini' similarity measure was removed from the package in version 2.2.1. 
+       If you want to send a dissimilarity matrix calculation script using the 'morlini' measure, please contact the package's maintainer.")
+  }
+  
+  # check of the used similarity measure
+  if (measure %in% c("eskin", "good1", "good2", "good3", "good4", "iof", "of", "lin", "lin1", "sm", "ve", "vm") == FALSE) {
+    stop("Invalid name of the similarity measure.")
+  }
+  
   # number of clusters cannot exceed the parameter clu.high
   if (nrow(data)<clu.high) {
     stop("The 'clu.high' argument cannot exceed the number of clustered objects.")
@@ -137,27 +145,14 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
   if (opt == TRUE & prox == TRUE) {
     opt <- FALSE
     warning("The time optimization method cannot be run if the proximity matrix is to be produced. The standard calculation method is used instead.")
-  }
+  } 
   
-  # for which measures the optimizalization will be used
-  if (opt == TRUE) {
-    if (measure %in% c("eskin", "good1", "good2", "good3", "good4", "iof", "of", "lin", "lin1", "sm", "ve", "vm")) {
-      opt <- TRUE
-      # print("Time optimalization in process.")
-    } else if (measure %in% c("morlini")) {
-      opt <- FALSE
-      warning("The time optimization cannot be used with the 'morlini' similarity measure. The standard calculation method is used instead.")
-    } else {
-      stop("Invalid name of the similarity measure.")
-    }
-  } else {
-      if (measure %in% c("eskin", "good1", "good2", "good3", "good4", "iof", "of", "lin", "lin1", "morlini", "sm", "ve", "vm")) {
-        opt <- FALSE
-        # print("Standard calculation method in process.")
-      } else {
-        stop("An invalid name of the similarity measure was used.")
-      }
-  }
+  # does not work
+  # if (opt == TRUE & (prox >= nrow(data))) {
+  #   opt <- FALSE
+  #   warning("The time optimization method cannot be run if the proximity matrix is to be produced. The standard calculation method is used instead.")
+  # }
+  
   
   # dealing with the missing data
   if (sum(is.na(data)) > 0) {
@@ -177,10 +172,8 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
   
   # recoding everything to factors and then to numeric values
   indx <- sapply(data, is.factor)
-  data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
-  data <- as.data.frame(unclass(data))
-  data <- sapply(data, function(x) as.numeric(x))
-  data <- as.data.frame(data)
+  data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
+  data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
   
   
   # number of variables of dataset
@@ -318,10 +311,10 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
   # }
   
   if (eval == 1 & prox == 1 & opt == 0) {
-    list <- list(mem = clu_results, eval = results1, opt = results2, prox = prox_matrix, dend = dend)
+    list <- list(mem = clu_results, eval = results1, opt = results2, prox = as.dist(prox_matrix), dend = dend)
   }
   if (eval == 0 & prox == 1 & opt == 0) {
-    list <- list(mem = clu_results, prox = prox_matrix, dend = dend)
+    list <- list(mem = clu_results, prox = as.dist(prox_matrix), dend = dend)
   }
   if (eval == 1 & prox == 0 & opt == 0) {
     list <- list(mem = clu_results, eval = results1, opt = results2, dend = dend)

@@ -10,7 +10,7 @@ of(data)
 \item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 }
 \value{
-The function returns a dissimilarity matrix of the size \code{n x n}, where \code{n} is the number of objects in the original dataset in the argument \code{data}.
+The function returns an object of class "dist".
 \cr
 }
 \description{
@@ -46,7 +46,6 @@ In Journal of Documentation, 28(1), p. 11-21. Later: Journal of Documentation, 6
 \code{\link[nomclust]{iof}},
 \code{\link[nomclust]{lin}},
 \code{\link[nomclust]{lin1}},
-\code{\link[nomclust]{morlini}},
 \code{\link[nomclust]{sm}},
 \code{\link[nomclust]{ve}},
 \code{\link[nomclust]{vm}}.

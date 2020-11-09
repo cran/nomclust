@@ -83,7 +83,7 @@ dend.plot <- function(x, clusters = "BIC", style = "greys", colorful = TRUE, clu
     if(clusters=='BK'  ){clusters= x$opt$BK}
     
   }else{
-    stop('Input argument x is missing or incorrect. Output from nomclust() or nomprox() functions is required.')
+    stop("Input argument x is missing or incorrect. Output from nomclust() or nomprox() functions with 'dend' and 'opt' components is required.")
 
   }
   
@@ -146,6 +146,7 @@ repeat{
   #check for break
   if(ancestors.col[x1] != ancestors.col[x2]) break
   
+  
   #draw segments
   col.backup=c(col.backup,ancestors.col[x1])
   segments(x1,y1.bottom,x1,y1.top,lwd=3, col=clu.col[ancestors.col[x1]])
@@ -154,7 +155,7 @@ repeat{
   
   #move to next iteration
   i=i+1
-  
+  if(i == length(order)) break
 }
   #work with one-object clusters
 #  i=nrow(merge.backup)

@@ -63,14 +63,14 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
     warning("The argument 'eval' was set to FALSE since the 'data' argument needed for evaluation criteria calculation was not provided.")
   }
   
-  #number of clusters cannot exceed the parameter clu.high
-  if (nrow(diss)<clu.high) {
-    stop("The argument 'clu.high' cannot exceed the number of clustered objects.")
-  }
-  
   # transforms the dist object into a matrix
   if (is(diss, "dist") == TRUE) {
     diss <- as.matrix(diss)
+  }
+  
+  #number of clusters cannot exceed the parameter clu.high
+  if (nrow(diss)<clu.high) {
+    stop("The argument 'clu.high' cannot exceed the number of clustered objects.")
   }
   
   # is an argument a square proximity matrix
@@ -86,7 +86,7 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
   
   if (eval == 1) {
     
-    # check if the data dimensions correspond to the proximity matrx dimensions
+    # check if the data dimensions correspond to the proximity matrix dimensions
     if (nrow(data) != nrow(diss)) {
       stop("The used dataset and the dissimilarity matrix are of different sizes.")
     }
@@ -107,10 +107,8 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
     
     # recoding everything to factors and then to numeric values
     indx <- sapply(data, is.factor)
-    data[!indx] <- sapply(data[!indx], function(x) as.factor(x))
-    data <- as.data.frame(unclass(data))
-    data <- sapply(data, function(x) as.numeric(x))
-    data <- as.data.frame(data)
+    data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
+    data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
     
     #number of variables of dataset
     num_var <- ncol(data)

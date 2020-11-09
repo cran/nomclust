@@ -18,7 +18,7 @@ nomclust(
 \item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
 
 \item{measure}{A \emph{character} string defining the similarity measure used for computation of proximity matrix in HCA:
-\code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"morlini"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.}
+\code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.}
 
 \item{method}{A \emph{character} string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
 
@@ -45,14 +45,14 @@ To see them all in once, the form of a \emph{data.frame} is more appropriate.
 The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
 \cr
 \cr
-The \code{prox} component contains the dissimilarity matrix in a form of a \emph{matrix}.
+The \code{prox} component contains the dissimilarity matrix in a form of the "dist" object.
 \cr
 \cr
 The \code{dend} component can be found in the output only together with the \code{prox} component. It contains all the necessary information for dendrogram creation.
 }
 \description{
 The \code{nomclust()} function runs hierarchical cluster analysis (HCA) with objects characterized by nominal (categorical) variables. It completely covers the clustering process, from the proximity matrix calculation to the evaluation of the quality of clustering.
-The function contains thirteen similarity measures for nominal data summarized in (Boriah et al., 2008) or introduced by Morlini and Zani in (Morlini and Zani, 2012), and by (Sulc and Rezankova, 2019). 
+The function contains twelve similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
 It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by seven evaluation criteria, see (Sulc et al., 2018). The output of the \code{nomclust()} function may serve as an input for visualization functions in the \bold{nomclust} package.
 }
 \examples{
@@ -76,7 +76,7 @@ data20.mem <- hca.object$mem
 data20.mem <- as.data.frame(hca.object$mem)
 
 # obtaining a proximity matrix
-data20.prox <- hca.object$prox
+data20.prox <- as.matrix(hca.object$prox)
 
 # setting the maximal number of objects for which a proximity matrix is provided in the output to 30
 hca.object <- nomclust(data20, measure = "lin", method = "average",
@@ -103,9 +103,6 @@ end - start
 \references{
 Boriah S., Chandola V. and Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
 In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
-\cr
-\cr
-Morlini I. and Zani S. (2012). A new class of weighted similarity indices using polytomous variables. Journal of Classification, 29(2), p. 199-226.
 \cr
 \cr
 Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
