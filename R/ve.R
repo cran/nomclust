@@ -1,10 +1,10 @@
 #' Variable Entropy (VE) Measure
 #' 
-#' @description A function for calculation of a proximity (dissimilarity) matrix based on the VE similarity measure.
+#' @description The function calculates a dissimilarity matrix based on the VE similarity measure.
 #'  
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in colums.
 #' 
-#' @return The function returns an object of class "dist".
+#' @return The function returns an object of the class "dist".
 #' \cr
 #' 
 #' @details The Variable Entropy similarity measure was introduced in (Sulc and Rezankova, 2019). It treats
@@ -50,9 +50,6 @@ ve <- function(data) {
     stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
   }
   
-  r <- nrow(data)
-  s <- ncol(data)
-  
   rnames <- row.names(data)
   
   # recoding everything to factors and then to numeric values
@@ -60,44 +57,27 @@ ve <- function(data) {
   data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
   data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
   
+  # variable weighting
   
-  #number of categories
-  num_cat <- sapply(data, function(x) length(unique(x)))
+  # if (var.weights %in% c("none", "MI", "nMI", "MU", "MA") == TRUE) {
+  #   var.wgt <- WGT(data, var.weights, alpha)
   
-  #frequency tables
-  abs.freq <- freq.abs(data)
-  rel.freq <- abs.freq/r
-  ln.freq <- log(rel.freq)
-  ln.freq[ln.freq == -Inf] <- 0
+  # OWN-DEFINED WEIGHTS
+  # } else if (is.numeric(var.weights) == TRUE) {
+  #    if(is.na(sum(var.weights >= 0)) | sum(var.weights >= 0)!=ncol(data)) {
+  #     stop("The vector of weights contains negative or missing values.")
+  #  }
+  #    var.wgt <- var.weights
   
-  #entropy
-  entropy_matrix <- rel.freq * ln.freq
-  entropy<- - colSums(entropy_matrix)
-  norm_entropy <- entropy/log(num_cat)
-  norm_entropy <- ifelse(is.nan(norm_entropy),0,norm_entropy)
   
-  agreement <- vector(mode="numeric", length=s)
-  ve <- matrix(data=0,nrow=r,ncol=r)
-  row.names(ve) <- rnames
+  # } else {
+  #   stop("Invalid weighting scheme.")
+  # }
+  freq.table <- freq.abs(data)
   
-  for (i in 1:(r-1)) {
-    for (j in (1+i):r) {
-      for (k in 1:s) {
-        if (data[i,k] == data[j,k]) {
-          agreement[k] <- norm_entropy[k]
-        }
-        else {
-          agreement[k] <- 0
-        }
-      }
-      if (i == j) {
-        ve[i,j] <- 0
-      }
-      else {
-        ve[i,j] <- 1-1/s*(sum(agreement))
-        ve[j,i] <- ve[i,j]
-      }
-    }
-  }
-  return(as.dist(ve))
+  prox_matrix <- SIMILARITY(data, measure = "ve", freq.table)
+  
+  row.names(prox_matrix) <- rnames
+  
+  return(as.dist(prox_matrix))
 }

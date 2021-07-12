@@ -1,30 +1,40 @@
-#' Hierarchical Cluster Analysis for Nominal Data Based on a Proximity Matrix
+#' Hierarchical Clustering of Nominal Data Based on a Proximity Matrix
 #' 
-#' @description The \code{nomprox()} function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
-#' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by seven evaluation indices, see (Sulc et al., 2018).
+#' @description The function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
+#' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation indices (Sulc et al., 2018).
 #' 
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in columns.
 #' 
-#' @param diss A proximity matrix or a dist object calculated from the dataset defined in a parameter \code{data}.
+#' @param diss A proximity matrix or a dist object calculated based on the dataset defined in a parameter \code{data}.
 #' 
-#' @param clu.high A \emph{numeric} value expressing the maximal number of cluster for which the cluster memberships variables are produced.
+#' @param clu.high A numeric value that expresses the maximal number of clusters for which the cluster membership variables are produced.
 #' 
-#' @param eval A \emph{logical} operator; if TRUE, evaluation of clustering results is performed.
+#' @param eval A logical operator; if TRUE, evaluation of clustering results is performed.
 #' 
-#' @param method A \emph{character} string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.
+#' @param method A character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.
 #' 
-#' @return The function returns a list with up to three components:
+#' @param prox A logical operator or a numeric value. If a logical value TRUE indicates that the proximity matrix is a part of the output. A numeric value (integer) of this argument indicates the maximal number of cases in a dataset for which a proximity matrix will occur in the output.
+#' 
+#' @return The function returns a list with up to six components:
 #' \cr
 #' \cr
-#' The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a \emph{list}.
+#' The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a list.
 #' \cr
 #' \cr
-#' The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
-#' To see them all in once, the form of a \emph{data.frame} is more appropriate.
+#' The \code{eval} component contains up to eight evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and, if the prox component is present, the silhouette index (SI).
 #' \cr
 #' \cr
 #' The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
+#' \cr
+#' \cr
+#' The \code{dend} component can be found in the output only together with the \code{prox} component. It contains all the necessary information for dendrogram creation.
+#' \cr
+#' \cr
+#' The \code{prox} component contains the dissimilarity matrix in the form of the "dist" object.
+#' \cr
+#' \cr
+#' The \code{call} component contains the function call.
 #' 
 #' @references
 #' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
@@ -43,13 +53,32 @@
 #' 
 #' # creating an object with results of hierarchical clustering 
 #' hca.object <- nomprox(diss = diss.matrix, data = data20, method = "complete",
-#'  clu.high = 5, eval = TRUE)
+#'  clu.high = 5, eval = TRUE, prox = FALSE)
+#'  
+#' # quick clustering summary
+#' summary(hca.object)
+#' 
+#' # quick cluster quality evaluation
+#' print(hca.object)
+#' 
+#' # visualization of the evaluation criteria
+#' eval.plot(hca.object)
+#' 
+#' # a dendrogram can be displayed if the object contains the prox component
+#' hca.object <- nomprox(diss = diss.matrix, data = data20, method = "complete",
+#'  clu.high = 5, eval = TRUE, prox = TRUE)
+#' 
+#' # a quick dendrogram
+#' plot(hca.object)
+#' 
+#' # a dendrogram with three designated clusters
+#' dend.plot(hca.object, clusters = 3)
 #' 
 #' 
 #' @export
 
 
-nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval = TRUE) {
+nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval = TRUE, prox = 100) {
   
   clu.low = 2
   
@@ -72,6 +101,23 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
   if (nrow(diss)<clu.high) {
     stop("The argument 'clu.high' cannot exceed the number of clustered objects.")
   }
+  
+  if (clu.high < 3) {
+    stop("The 'clu.high' argument cannot be lower than 3.")
+  }
+  
+  # calculate proximity matrix for up to maximal size of a dataset
+  if (prox != FALSE & prox != TRUE) {
+    if (is.numeric(prox) == T) {
+      if (nrow(diss) <= abs(as.integer(prox))) {
+        prox <- T
+      } else
+        prox <- F
+    } else
+      stop("The 'prox' argument should be of the 'numeric' type.")
+  }
+  
+  
   
   # is an argument a square proximity matrix
   if ((nrow(diss) != ncol(diss)) == TRUE) {
@@ -164,7 +210,7 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
     M[[1]] <- M1
     
     #evaluation results
-    results <- EVAL(M)
+    results <- EVAL(M, clusters, diss = diss)
     results1 <- results[[1]]
     results2 <- results[[2]]
     
@@ -173,13 +219,28 @@ nomprox <- function (diss, data = NULL, method = "average", clu.high = 6, eval =
   clu_results <-  as.list(clusters)
   dend <- hca[-c(5,6)]
   
-  if (eval == 1) {
-    list <- list(mem = clu_results, eval = results1, opt = results2, dend = dend)
-  }
-  if (eval == 0) {
-    list <- list(mem = clu_results, dend = dend)
+  call <- match.call()
+  
+  if (prox == 1) {
+    if (eval == 1) {
+      list <- list(mem = clu_results, eval = results1, opt = results2, dend = dend, prox = as.dist(diss), call = call)
+    }
+    if (eval == 0) {
+      list <- list(mem = clu_results, dend = dend, prox = as.dist(diss), call = call)
+    }
   }
   
+  if (prox == 0) {
+    if (eval == 1) {
+      list <- list(mem = clu_results, eval = results1, opt = results2, dend = dend, call = call)
+    }
+    if (eval == 0) {
+      list <- list(mem = clu_results, dend = dend, call = call)
+    }
+  }
+  
+  
+  attr(list,"class")="nomclust"
   
   return(list)
 }

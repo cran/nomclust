@@ -1,11 +1,12 @@
 #' Goodall 1 (G1) Measure
 #' 
-#' @description A function for calculation of a proximity (dissimilarity) matrix based on the G1 similarity measure.
+#' @description The function calculates a dissimilarity matrix based on the G1 similarity measure.
 #' 
 #'  
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in colums.
 #' 
-#' @return The function returns an object of class "dist".
+#' 
+#' @return The function returns an object of the class "dist".
 #' \cr
 #' 
 #' @details The Goodall 1 similarity measure was presented in (Boriah et al., 2008).
@@ -49,10 +50,6 @@ good1 <- function(data) {
     stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
   }
   
-  
-  r <- nrow(data)
-  s <- ncol(data)
-  
   rnames <- row.names(data)
   
   # recoding everything to factors and then to numeric values
@@ -60,36 +57,28 @@ good1 <- function(data) {
   data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
   data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
   
+  # variable weighting
   
-  freq.abs <- freq.abs(data)
-  freq.rel <- freq.abs/r
-  freq.rel2 <- freq.rel^2
+  # if (var.weights %in% c("none", "MI", "nMI", "MU", "MA") == TRUE) {
+  #   var.wgt <- WGT(data, var.weights, alpha)
   
-  agreement <- vector(mode="numeric", length=s)
-  good1 <- matrix(data=0,nrow=r,ncol=r)
-  row.names(good1) <- rnames
+  # OWN-DEFINED WEIGHTS
+  # } else if (is.numeric(var.weights) == TRUE) {
+  #    if(is.na(sum(var.weights >= 0)) | sum(var.weights >= 0)!=ncol(data)) {
+  #     stop("The vector of weights contains negative or missing values.")
+  #  }
+  #    var.wgt <- var.weights
   
   
-  for (i in 1:(r-1)) {
-    for (j in (1+i):r) {
-      for (k in 1:s) {
-        c <- data[i,k]
-        if (data[i,k] == data[j,k]) {
-          logic <- t(freq.rel[,k] <= freq.rel[c,k])
-          agreement[k] <- 1 - sum(freq.rel2[,k] * logic)
-        }
-        else {
-          agreement[k] <- 0
-        }
-      }
-      if (i == j) {
-        good1[i,j] <- 0
-      }
-      else {
-        good1[i,j] <- 1-1/s*(sum(agreement))
-        good1[j,i] <- good1[i,j]
-      }
-    }
-  }
-  return(as.dist(good1))
+  # } else {
+  #   stop("Invalid weighting scheme.")
+  # }
+  
+  freq.table <- freq.abs(data)
+  
+  prox_matrix <- SIMILARITY(data, measure = "good1", freq.table)
+  
+  row.names(prox_matrix) <- rnames
+
+  return(as.dist(prox_matrix))
 }

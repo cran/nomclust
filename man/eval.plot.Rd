@@ -14,28 +14,29 @@ eval.plot(
 )
 }
 \arguments{
-\item{x}{An output of the \code{nomclust()} or \code{nomprox()} functions containing the \code{eval} and \code{opt} components.}
+\item{x}{An output of the "nomclust" object containing the \code{eval} and \code{opt} components.}
 
-\item{criteria}{A \emph{character} string or character \emph{vector} specifying the criteria that are going to be visualized. It can be selected one particular criterion, a vector of criteria or all the available criteria by typing \code{"all"}.}
+\item{criteria}{A character string or character vector specifying the criteria that are going to be visualized. It can be selected one particular criterion, a vector of criteria, or all the available criteria by typing \code{"all"}.}
 
-\item{style}{A \emph{character} string or a \emph{vector} of colors defines a graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.}
+\item{style}{A character string or a vector of colors defines the graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.}
 
 \item{opt.col}{An argument specifying a color that is used for the optimal number of clusters identification.}
 
-\item{main}{A \emph{character} string with the chart title.}
+\item{main}{A character string with the chart title.}
 
 \item{...}{Other graphical arguments compatible with the generic \code{plot()} function.}
 }
 \value{
-The function returns a series of up to seven plots with evaluation criteria values and the graphical indication of the optimal numbers of clusters (for AIC, BIC, BK, PSFE, PSFM).
-\cr
+The function returns a series of up to eight plots with evaluation criteria values and the graphical indication of the optimal numbers of clusters (for AIC, BIC, BK, PSFE, PSFM, SI).
 }
 \description{
-The function \code{eval.plot()} visualizes the values of seven evaluation criteria for the range of cluster solutions defined by the user in the \bold{nomclust}, \bold{evalclust} or \bold{nomprox} functions.
- It also indicates the optimal number of clusters determined by these criteria. The charts for the seven evaluation criteria in the \bold{nomclust} package.
+The function visualizes the values of up to eight evaluation criteria for the range of cluster solutions defined by the user in the \bold{nomclust}, \bold{evalclust} or \bold{nomprox} functions.
+ It also indicates the optimal number of clusters determined by these criteria. The charts for the evaluation criteria in the \bold{nomclust} package.
 }
 \details{
-The function can be applied to the output of the \code{nomclust()}, \code{evalclust()} or \code{nomprox()} object containing a \code{eval} and \code{opt} components.
+The function can display up to eight evaluation criteria. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and the silhouette index (SI).
+\cr
 }
 \examples{
 # sample data
@@ -52,6 +53,9 @@ eval.plot(hca.object, opt.col= "darkorange")
 
 # selecting only AIC and BIC criteria with the dark style
 eval.plot(hca.object, criteria = c("AIC", "BIC"), style = "dark")
+
+# selecting only SI
+eval.plot(hca.object, criteria = "SI")
 
 }
 \seealso{

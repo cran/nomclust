@@ -7,14 +7,14 @@
 of(data)
 }
 \arguments{
-\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
+\item{data}{A data.frame or a matrix with cases in rows and variables in colums.}
 }
 \value{
-The function returns an object of class "dist".
+The function returns an object of the class "dist".
 \cr
 }
 \description{
-A function for calculation of a proximity (dissimilarity) matrix based on the OF similarity measure.
+The function calculates a dissimilarity matrix based on the OF similarity measure.
 }
 \details{
 The OF (Occurrence Frequency) measure was originally constructed for the text mining tasks,

@@ -1,10 +1,10 @@
 #' Simple Matching Coefficient (SM)
 #' 
-#' @description A function for calculation of a proximity (dissimilarity) matrix based on the SM similarity measure.
+#' @description The function calculates a dissimilarity matrix based on the SM similarity measure.
 #'  
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in colums.
 #' 
-#' @return The function returns an object of class "dist".
+#' @return The function returns an object of the class "dist".
 #' \cr
 #' 
 #' @details The simple matching coefficient (Sokal, 1958) represents the simplest way of measuring similarity. It does not impose any weights.
@@ -52,9 +52,6 @@ sm <- function(data) {
     stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
   }
   
-  r <- nrow(data)
-  s <- ncol(data)
-  
   rnames <- row.names(data)
   
   # recoding everything to factors and then to numeric values
@@ -62,23 +59,26 @@ sm <- function(data) {
   data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
   data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
   
-  agreement <- vector(mode="numeric", length=s)
-  sm <- matrix(data=0,nrow=r,ncol=r)
-  row.names(sm) <- rnames
+  # variable weighting
   
-  for (i in 1:(r-1)) {
-    for (j in (1+i):r) {
-      for (k in 1:s) {
-        if (data[i,k] == data[j,k]) {
-          agreement[k] <- 1
-        }
-        else {
-          agreement[k] <- 0
-        }
-      }
-      sm[i,j] <- 1-1/s*(sum(agreement))
-      sm[j,i] <- sm[i,j]
-    }
-  }
-  return(as.dist(sm))
+  # if (var.weights %in% c("none", "MI", "nMI", "MU", "MA") == TRUE) {
+  #   var.wgt <- WGT(data, var.weights, alpha)
+  
+  # OWN-DEFINED WEIGHTS
+  # } else if (is.numeric(var.weights) == TRUE) {
+  #    if(is.na(sum(var.weights >= 0)) | sum(var.weights >= 0)!=ncol(data)) {
+  #     stop("The vector of weights contains negative or missing values.")
+  #  }
+  #    var.wgt <- var.weights
+  
+  
+  # } else {
+  #   stop("Invalid weighting scheme.")
+  # }
+  
+  prox_matrix <- SIMILARITY(data, measure = "sm", freq.table = NULL)
+  
+  row.names(prox_matrix) <- rnames
+  
+  return(as.dist(prox_matrix))
 }

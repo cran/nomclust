@@ -2,7 +2,7 @@
 % Please edit documentation in R/nomclust.R
 \name{nomclust}
 \alias{nomclust}
-\title{Hierarchical Cluster Analysis for Nominal Data}
+\title{Hierarchical Clustering of Nominal Data}
 \usage{
 nomclust(
   data,
@@ -10,50 +10,49 @@ nomclust(
   method = "average",
   clu.high = 6,
   eval = TRUE,
-  prox = 100,
-  opt = TRUE
+  prox = 100
 )
 }
 \arguments{
-\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
+\item{data}{A data.frame or a matrix with cases in rows and variables in columns.}
 
-\item{measure}{A \emph{character} string defining the similarity measure used for computation of proximity matrix in HCA:
+\item{measure}{A character string defining the similarity measure used for computation of proximity matrix in HCA:
 \code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.}
 
-\item{method}{A \emph{character} string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
+\item{method}{A character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
 
-\item{clu.high}{A \emph{numeric} value expressing the maximal number of cluster for which the cluster memberships variables are produced.}
+\item{clu.high}{A numeric value expressing the maximal number of cluster for which the cluster memberships variables are produced.}
 
-\item{eval}{A \emph{logical} operator; if TRUE, evaluation of the clustering results is performed.}
+\item{eval}{A logical operator; if TRUE, evaluation of the clustering results is performed.}
 
-\item{prox}{A \emph{logical} operator or a numeric value. If a logical value TRUE indicates that the proximity matrix is a part of the output. A numeric value (integer) of this argument indicates the maximal number of cases in a dataset for which a proximity matrix will occur in the output.}
-
-\item{opt}{A \emph{logical} operator; if TRUE, the time optimization method is run to substantially decrease computation time of the dissimilarity matrix calcation. Time optimalization method cannot be run if the proximity matrix is to be produced. In such a case, this parameter is automatically set to FALSE.}
+\item{prox}{A logical operator or a numeric value. If a logical value TRUE indicates that the proximity matrix is a part of the output. A numeric value (integer) of this argument indicates the maximal number of cases in a dataset for which a proximity matrix will occur in the output.}
 }
 \value{
-The function returns a \emph{list} with up to five components.
+The function returns a list with up to six components.
 \cr
 \cr
-The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a \emph{list}.
+The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a list.
 \cr
 \cr
-The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
-To see them all in once, the form of a \emph{data.frame} is more appropriate.
+The \code{eval} component contains up to eight evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and, if the prox component is present, the silhouette index (SI).
 \cr
 \cr
 The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
 \cr
 \cr
-The \code{prox} component contains the dissimilarity matrix in a form of the "dist" object.
+The \code{dend} component can be found in the output together with the \code{prox} component. It contains all the necessary information for dendrogram creation.
 \cr
 \cr
-The \code{dend} component can be found in the output only together with the \code{prox} component. It contains all the necessary information for dendrogram creation.
+The \code{prox} component contains the dissimilarity matrix in the form of the "dist" object.
+\cr
+\cr
+The \code{call} component contains the function call.
 }
 \description{
-The \code{nomclust()} function runs hierarchical cluster analysis (HCA) with objects characterized by nominal (categorical) variables. It completely covers the clustering process, from the proximity matrix calculation to the evaluation of the quality of clustering.
-The function contains twelve similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
-It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by seven evaluation criteria, see (Sulc et al., 2018). The output of the \code{nomclust()} function may serve as an input for visualization functions in the \bold{nomclust} package.
+The function runs hierarchical cluster analysis (HCA) with objects characterized by nominal variables (without natural order of categories).
+ It completely covers the clustering process, from the dissimilarity matrix calculation to the cluster quality evaluation. The function enables a user to choose from twelve similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
+ Next, it offers to choose from three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation criteria (Sulc et al., 2018). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
 }
 \examples{
 # sample data
@@ -61,43 +60,45 @@ data(data20)
 
 # creating an object with results of hierarchical clustering of 
 hca.object <- nomclust(data20, measure = "lin", method = "average",
- clu.high = 5, prox = TRUE, opt = FALSE)
+ clu.high = 5, prox = TRUE)
 
-# obtaining values of evaluation indices
-data20.eval <- hca.object$eval
+# quick clustering summary
+summary(hca.object)
 
-# getting the optimal numbers of clusters
-data20.opt <- hca.object$opt
+# quick cluster quality evaluation
+print(hca.object)
 
-# extracting cluster membership variables
-data20.mem <- hca.object$mem
+# visualization of the evaluation criteria
+eval.plot(hca.object)
 
-# extracting cluster membership variables as a data frame
+# a quick dendrogram
+plot(hca.object)
+
+# a dendrogram with three designated clusters
+dend.plot(hca.object, clusters = 3)
+
+# obtaining values of evaluation indices as a data.frame
+data20.eval <- as.data.frame(hca.object$eval)
+
+# getting the optimal numbers of clusters as a data.frame
+data20.opt <- as.data.frame(hca.object$opt)
+
+# extracting cluster membership variables as a data.frame
 data20.mem <- as.data.frame(hca.object$mem)
 
 # obtaining a proximity matrix
 data20.prox <- as.matrix(hca.object$prox)
 
 # setting the maximal number of objects for which a proximity matrix is provided in the output to 30
-hca.object <- nomclust(data20, measure = "lin", method = "average",
- clu.high = 5, prox = 30, opt = FALSE)
+hca.object <- nomclust(data20, measure = "iof", method = "complete",
+ clu.high = 5, prox = 30)
+ 
+# transforming the nomclust object to the class "hclust"
+hca.object.hclust <- as.hclust(hca.object)
 
-# generating of a larger dataset containing repeatedly occuring objects
-set.seed(150)
-sample150 <- sample(1:nrow(data20), 150, replace = TRUE)
-data150 <- data20[sample150, ]
+# transforming the nomclust object to the class "agnes, twins"
+hca.object.agnes <- as.agnes(hca.object)
 
-# running hierarchical clustering WITH the time optimization
-start <- Sys.time()
-hca.object.opt.T <- nomclust(data150, measure = "lin", opt = TRUE)
-end <- Sys.time()
-end - start
-
-# running hierarchical clustering WITHOUT the time optimization
-start <- Sys.time()
-hca.object.opt.F <- nomclust(data150, measure = "lin", opt = FALSE)
-end <- Sys.time()
-end - start
 
 }
 \references{

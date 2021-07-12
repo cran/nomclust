@@ -1,6 +1,6 @@
-EVAL <- function(M){
-  
-  # determination of minimal and maximal number of clusters
+EVAL <- function(M, clusters, diss){
+
+    # determination of minimal and maximal number of clusters
   clu_high <- dim(M[[length(M)]])[2]
   clu_low <- clu_high - length(M) + 2
   num_clu <-  clu_high - clu_low + 1
@@ -18,9 +18,7 @@ EVAL <- function(M){
   
   names <- vector(mode="character", length=num_clu)
   BIC <- vector(mode="numeric", length=num_clu)
-  #BIC2 <- vector(mode="numeric", length=num_clu)
   AIC <- vector(mode="numeric", length=num_clu)
-  #AIC2 <- vector(mode="numeric", length=num_clu)
   WCE <- vector(mode="numeric", length=num_clu)
   WCM <- vector(mode="numeric", length=num_clu)
   nWCE <- vector(mode="numeric", length=num_clu)
@@ -29,7 +27,8 @@ EVAL <- function(M){
   PSFM <- vector(mode="numeric", length=num_clu)
   increment <- vector(mode="numeric", length=num_clu)
   BK <- vector(mode="numeric", length=num_clu)
-
+  SI <- vector(mode="numeric", length=num_clu)
+  
     for (k in c(1,clu_low:clu_high)) {
     matrix <- M[[k]]
     
@@ -39,10 +38,7 @@ EVAL <- function(M){
     G_g_norm <- vector(mode="numeric", length=k)
     
     penalty <- sum(num_cat - 1)
-    
-    #BIC1 <- vector(mode="numeric", length=k)
-    #var <- vector(mode="numeric", length=k)
-    
+
     for (g in 1:k) {
       H_gc <- vector(mode="numeric", length=m)
       G_gc <- vector(mode="numeric", length=m)
@@ -84,9 +80,7 @@ EVAL <- function(M){
     }
     names[k] <- paste("clu",k, sep = "_")
     BIC[k] <- -2 * -(sum(H_g)) + k * penalty * log(n)
-    #BIC2[k] <- -2 * -(sum(G_g)) + k * penalty * log(n)
     AIC[k] = -2 * -(sum(H_g)) + 2*k * penalty
-    #AIC2[k] = -2 * -(sum(G_g)) + 2*k * penalty
     WCE[k] = sum(H_g_norm)/m # normalized
     WCM[k] = sum(G_g_norm)/m # normalized
     nWCE[k] = sum(H_g)/n/m # non-normalized
@@ -103,20 +97,41 @@ EVAL <- function(M){
     BK[1] <- NA
   }
   
+  # dissimilarity matrix is in the input
+  if (is.null(diss) == FALSE) {
+    for (k in clu_low:clu_high) {
+      SI[k] <- summary(silhouette(clusters[,k-1], diss))$avg.width
+      SI[1] <- NA
+    }
+  }
+  
+  if (is.null(diss) == FALSE) {
+  
   # list of coefficients in an output
-  coef <- list(names = names, WCM = WCM, WCE = WCE, PSFM = PSFM, PSFE = PSFE, BIC = BIC, AIC = AIC, BK = BK)
+  coef <- list(names = names, WCM = WCM, WCE = WCE, PSFM = PSFM, PSFE = PSFE, BIC = BIC, AIC = AIC, BK = BK, SI = SI)
 
   clusters <- c(1,clu_low:clu_high) # a list of examined cluster solutions
   PSFM_opt <- as.integer(clusters[which.max(coef$PSFM)])
   PSFE_opt <- as.integer(clusters[which.max(coef$PSFE)])
   BK_opt <- as.integer(clusters[which.max(coef$BK)])
   BIC_opt <- as.integer(clusters[which.min(coef$BIC)])
-  #BIC2_opt <- as.integer(clusters[which.min(coef$BIC2)])
   AIC_opt <- as.integer(clusters[which.min(coef$AIC)])
-  #AIC2_opt <- as.integer(clusters[which.min(coef$AIC2)])
-  
-  
-  optimal <- list(PSFM = PSFM_opt, PSFE = PSFE_opt, BIC = BIC_opt, AIC = AIC_opt, BK = BK_opt)
+  SI_opt <- as.integer(clusters[which.max(coef$SI)])
+
+  optimal <- list(PSFM = PSFM_opt, PSFE = PSFE_opt, BIC = BIC_opt, AIC = AIC_opt, BK = BK_opt, SI = SI_opt)
+  } else {
+    # list of coefficients in an output
+    coef <- list(names = names, WCM = WCM, WCE = WCE, PSFM = PSFM, PSFE = PSFE, BIC = BIC, AIC = AIC, BK = BK)
+    
+    clusters <- c(1,clu_low:clu_high) # a list of examined cluster solutions
+    PSFM_opt <- as.integer(clusters[which.max(coef$PSFM)])
+    PSFE_opt <- as.integer(clusters[which.max(coef$PSFE)])
+    BK_opt <- as.integer(clusters[which.max(coef$BK)])
+    BIC_opt <- as.integer(clusters[which.min(coef$BIC)])
+    AIC_opt <- as.integer(clusters[which.min(coef$AIC)])
+    
+    optimal <- list(PSFM = PSFM_opt, PSFE = PSFE_opt, BIC = BIC_opt, AIC = AIC_opt, BK = BK_opt)
+  }
   
   output <- list(coef, optimal) 
   return(output)

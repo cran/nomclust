@@ -1,10 +1,10 @@
 #' Lin 1 (LIN1) Measure
 #' 
-#' @description A function for calculation of a proximity (dissimilarity) matrix based on the LIN1 similarity measure.
+#' @description The function calculates a dissimilarity matrix based on the LIN1 similarity measure.
 #'                                        
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in colums.
 #' 
-#' @return The function returns an object of class "dist".
+#' @return The function returns an object of the class "dist".
 #' \cr
 #'
 #' @details The Lin 1 similarity measure was introduced in (Boriah et al., 2008) as a modification of the original Lin measure (Lin, 1998). In has
@@ -57,9 +57,6 @@ lin1 <- function(data) {
     stop("The dissimilarity matrix CANNOT be calculated if the 'data' argument contains NA values.")
   }
   
-  r <- nrow(data)
-  s <- ncol(data)
-  
   rnames <- row.names(data)
   
   # recoding everything to factors and then to numeric values
@@ -67,45 +64,27 @@ lin1 <- function(data) {
   data[!indx] <- lapply(data[!indx], function(x) as.factor(x))
   data <- as.data.frame(sapply(data, function(x) as.numeric(x)))
   
+  # variable weighting
   
-  abs.freq <- freq.abs(data)
-  freq.rel <- abs.freq/r
-  #freq.ln <- log(freq.rel)
-  #freq.ln[freq.ln == -Inf] <- 0
+  # if (var.weights %in% c("none", "MI", "nMI", "MU", "MA") == TRUE) {
+  #   var.wgt <- WGT(data, var.weights, alpha)
+  
+  # OWN-DEFINED WEIGHTS
+  # } else if (is.numeric(var.weights) == TRUE) {
+  #    if(is.na(sum(var.weights >= 0)) | sum(var.weights >= 0)!=ncol(data)) {
+  #     stop("The vector of weights contains negative or missing values.")
+  #  }
+  #    var.wgt <- var.weights
   
   
-  agreement <- vector(mode="numeric", length=s)
-  lin1 <- matrix(data=0,nrow=r,ncol=r)
-  row.names(lin1) <- rnames
-  weights <- vector(mode="numeric", length=s)
-
-  for (i in 1:(r-1)) {
-    for (j in (1+i):r) {
-      for (k in 1:s) {
-        c <- data[i,k]
-        d <- data[j,k]
-        if (data[i,k] == data[j,k]) {
-          logic <- freq.rel[,k] == freq.rel[c,k]
-          agreement[k] <- log(sum(logic * freq.rel[,k]))
-          weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
-        }
-        else {
-          if (freq.rel[c,k] >= freq.rel[d,k]) {
-            logic <- freq.rel[,k] >= freq.rel[d,k] & freq.rel[,k] <= freq.rel[c,k]
-            agreement[k] <- 2*log(sum(logic * freq.rel[,k]))
-            weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
-          }
-          else {
-            logic <- freq.rel[,k] >= freq.rel[c,k] & freq.rel[,k] <= freq.rel[d,k]
-            agreement[k] <- 2*log(sum(logic * freq.rel[,k]))
-            weights[k] <- log(freq.rel[c,k]) + log(freq.rel[d,k])
-          }
-        }
-      }
-      lin1[i,j] <- 1/(1/sum(weights)*(sum(agreement))) - 1
-      lin1[j,i] <- lin1[i,j]
-    }
-  }
-  lin1[lin1 == -Inf] <- max(lin1) + 1
-  return(as.dist(lin1))
+  # } else {
+  #   stop("Invalid weighting scheme.")
+  # }
+  freq.table <- freq.abs(data)
+  
+  prox_matrix <- SIMILARITY(data, measure = "lin1", freq.table)
+  
+  row.names(prox_matrix) <- rnames
+  
+  return(as.dist(prox_matrix))
 }

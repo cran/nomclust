@@ -7,14 +7,14 @@
 eskin(data)
 }
 \arguments{
-\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
+\item{data}{A data.frame or a matrix with cases in rows and variables in colums.}
 }
 \value{
-The function returns an object of class "dist".
+The function returns an object of the class "dist".
 \cr
 }
 \description{
-A function for calculation of a proximity (dissimilarity) matrix based on the ES similarity measure.
+The function calculates a dissimilarity matrix based on the ES similarity measure.
 }
 \details{
 The Eskin similarity measure was proposed by Eskin et al. (2002) and examined by Boriah et al., (2008). It is constructed to assign

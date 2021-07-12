@@ -7,14 +7,14 @@
 sm(data)
 }
 \arguments{
-\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
+\item{data}{A data.frame or a matrix with cases in rows and variables in colums.}
 }
 \value{
-The function returns an object of class "dist".
+The function returns an object of the class "dist".
 \cr
 }
 \description{
-A function for calculation of a proximity (dissimilarity) matrix based on the SM similarity measure.
+The function calculates a dissimilarity matrix based on the SM similarity measure.
 }
 \details{
 The simple matching coefficient (Sokal, 1958) represents the simplest way of measuring similarity. It does not impose any weights.

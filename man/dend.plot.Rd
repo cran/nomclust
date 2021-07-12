@@ -18,17 +18,17 @@ dend.plot(
 \arguments{
 \item{x}{An output of the \code{nomclust()} or \code{nomprox()} functions containing the \code{dend} component.}
 
-\item{clusters}{Either a \emph{numeric} value or a \emph{character} string with the name of the evaluation criterion expressing the number of displayed clusters in a dendrogram. The following evaluation criteria can be used: \code{"AIC"}, \code{"BIC"}, \code{"BK"}, \code{"PSFE"} and \code{"PSFM"}.}
+\item{clusters}{Either a numeric value or a character string with the name of the evaluation criterion expressing the number of displayed clusters in a dendrogram. The following evaluation criteria can be used: \code{"AIC"}, \code{"BIC"}, \code{"BK"}, \code{"PSFE"}, \code{"PSFM"}, and \code{"SI"}.}
 
-\item{style}{A \emph{character} string or a \emph{vector} of colors defines a graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.}
+\item{style}{A character string or a vector of colors defines the graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.}
 
-\item{colorful}{A \emph{logical} argument specifying if the output will be colorful or black and white.}
+\item{colorful}{A logical argument that is specifying if the output will be colorful or black and white.}
 
-\item{clu.col}{An optional \emph{vector} of colors which allows a researcher to apply user-defined colors for displayed (marked) clusters in a dendrogram.}
+\item{clu.col}{An optional vector of colors that allows a researcher to apply user-defined colors for displayed (marked) clusters in a dendrogram.}
 
-\item{main}{A \emph{character} string with the chart title.}
+\item{main}{A character string with the chart title.}
 
-\item{ac}{A \emph{logical} argument indicating if an agglomerative coefficient will be present in the output.}
+\item{ac}{A logical argument that indicates if an agglomerative coefficient will be present in the output.}
 
 \item{...}{Other graphical arguments compatible with the generic \code{plot()} function.}
 }
@@ -37,18 +37,18 @@ The function returns a dendrogram describing the hierarchy of clusters that can 
 \cr
 }
 \description{
-The function \code{dend.plot()} visualizes the hierarchy of clusters using a dendrogram. The function also enables a user to mark the individual clusters with colors. 
-The number of displayed clusters can be defined either by a user or by one of the five evaluation criteria.
+The function visualizes the hierarchy of clusters using a dendrogram. The function also enables a user to distinguish the individual clusters with colors. 
+The number of displayed clusters can be defined by a user or by one of the six evaluation criteria.
 }
 \details{
-The function can be applied to a \code{nomclust()} or \code{nomprox()} output containing the \code{dend} component. This component is not available when the optimization process is used.
+The function can be applied to a \code{nomclust()} or \code{nomprox()} output containing the \code{dend} component.
 }
 \examples{
 # sample data
 data(data20)
 
 # creating an object with results of hierarchical clustering 
-hca.object <- nomclust(data20, measure = "iof", eval = TRUE, opt = FALSE)
+hca.object <- nomclust(data20, measure = "iof", eval = TRUE)
 
 # a basic plot
 dend.plot(hca.object)

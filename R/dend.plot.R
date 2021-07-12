@@ -1,28 +1,28 @@
 #' Visualization of Cluster Hierarchy using a Dendrogram
 #' 
-#' @description The function \code{dend.plot()} visualizes the hierarchy of clusters using a dendrogram. The function also enables a user to mark the individual clusters with colors. 
-#' The number of displayed clusters can be defined either by a user or by one of the five evaluation criteria.
+#' @description The function visualizes the hierarchy of clusters using a dendrogram. The function also enables a user to distinguish the individual clusters with colors. 
+#' The number of displayed clusters can be defined by a user or by one of the six evaluation criteria.
 #' 
 #' @param x An output of the \code{nomclust()} or \code{nomprox()} functions containing the \code{dend} component.
 #' 
-#' @param clusters Either a \emph{numeric} value or a \emph{character} string with the name of the evaluation criterion expressing the number of displayed clusters in a dendrogram. The following evaluation criteria can be used: \code{"AIC"}, \code{"BIC"}, \code{"BK"}, \code{"PSFE"} and \code{"PSFM"}.
+#' @param clusters Either a numeric value or a character string with the name of the evaluation criterion expressing the number of displayed clusters in a dendrogram. The following evaluation criteria can be used: \code{"AIC"}, \code{"BIC"}, \code{"BK"}, \code{"PSFE"}, \code{"PSFM"}, and \code{"SI"}.
 #' 
-#' @param style A \emph{character} string or a \emph{vector} of colors defines a graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.
+#' @param style A character string or a vector of colors defines the graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.
 #'
-#' @param colorful A \emph{logical} argument specifying if the output will be colorful or black and white.
+#' @param colorful A logical argument that is specifying if the output will be colorful or black and white.
 #' 
-#' @param clu.col An optional \emph{vector} of colors which allows a researcher to apply user-defined colors for displayed (marked) clusters in a dendrogram.
+#' @param clu.col An optional vector of colors that allows a researcher to apply user-defined colors for displayed (marked) clusters in a dendrogram.
 #' 
-#' @param main A \emph{character} string with the chart title.
+#' @param main A character string with the chart title.
 #' 
-#' @param ac A \emph{logical} argument indicating if an agglomerative coefficient will be present in the output.
+#' @param ac A logical argument that indicates if an agglomerative coefficient will be present in the output.
 #' 
 #' @param ... Other graphical arguments compatible with the generic \code{plot()} function.
 #' 
 #' @return The function returns a dendrogram describing the hierarchy of clusters that can help to identify the optimal number of clusters.
 #' \cr
 #'
-#' @details The function can be applied to a \code{nomclust()} or \code{nomprox()} output containing the \code{dend} component. This component is not available when the optimization process is used.
+#' @details The function can be applied to a \code{nomclust()} or \code{nomprox()} output containing the \code{dend} component.
 #'
 #' @seealso
 #' \code{\link[nomclust]{eval.plot}}, \code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{nomprox}}.
@@ -34,7 +34,7 @@
 #' data(data20)
 #' 
 #' # creating an object with results of hierarchical clustering 
-#' hca.object <- nomclust(data20, measure = "iof", eval = TRUE, opt = FALSE)
+#' hca.object <- nomclust(data20, measure = "iof", eval = TRUE)
 #' 
 #' # a basic plot
 #' dend.plot(hca.object)
@@ -52,11 +52,12 @@
 
 
 dend.plot <- function(x, clusters = "BIC", style = "greys", colorful = TRUE, clu.col = NA, main = "Dendrogram", ac = TRUE, ...) {
+  
   #read input arguments
   if(style[1] == "dark"){style = rep("black",4)}
   if(style[1] == "greys"){    style = grey.colors(5)}
   
-  if(typeof(x)=="list" & "dend" %in% names(x) & "opt" %in% names(x)){
+  if(typeof(x)=="list" & "dend" %in% names(x)){
     #create agnes object
     a.object=list()
     a.object$order=x$dend$order
@@ -71,21 +72,31 @@ dend.plot <- function(x, clusters = "BIC", style = "greys", colorful = TRUE, clu
     merge=        a.object$merge
     order=        a.object$order
     
-    if(!is.numeric(clusters)){clusters=toupper(clusters)}
-    
-    if(!(clusters %in% c('BIC','AIC','PSFM','PSFE','BK') | if(is.numeric(clusters)){clusters%%1==0 & clusters>0}else{F})){
-      stop('Choose the number of clusters to be visualized. It should be either a number or one of these criteria: AIC, BIC, BK, PSFM, PSFE.')
+    if("opt" %in% names(x)){
+      if(clusters=='BIC' ){clusters= x$opt$BIC}
+      if(clusters=='AIC' ){clusters= x$opt$AIC}
+      if(clusters=='PSFM'){clusters= x$opt$PSFM}
+      if(clusters=='PSFE'){clusters= x$opt$PSFE}
+      if(clusters=='BK'  ){clusters= x$opt$BK}
+      if(clusters=='SI'  ){clusters= x$opt$SI}
     }
-    if(clusters=='BIC' ){clusters= x$opt$BIC}
-    if(clusters=='AIC' ){clusters= x$opt$AIC}
-    if(clusters=='PSFM'){clusters= x$opt$PSFM}
-    if(clusters=='PSFE'){clusters= x$opt$PSFE}
-    if(clusters=='BK'  ){clusters= x$opt$BK}
+    if(!is.numeric(clusters)){
+      clusters=toupper(clusters)
+    }
+    if(!("opt" %in% names(x)) & clusters %in% c('BIC','AIC','PSFM','PSFE','BK','SI')){
+      clusters=1
+      colorful=F} 
+    
+    if(!(clusters %in% c('BIC','AIC','PSFM','PSFE','BK','SI') | if(is.numeric(clusters)){clusters%%1==0 & clusters>0}else{F})){
+      stop("Choose the number of clusters to be visualized. It should be either a number or one of these criteria: AIC, BIC, BK, PSFM, PSFE, SI.")
+    }
     
   }else{
-    stop("Input argument x is missing or incorrect. Output from nomclust() or nomprox() functions with 'dend' and 'opt' components is required.")
+    stop("Input argument x is missing or incorrect. Output from nomclust() or nomprox() functions with 'dend' component is required.")
 
   }
+  
+  if(is.null(x$opt)){warning("Component 'opt' is missing. Hence the 'clusters' argument is ignored by the plotting function. Choose the number of clusters to be visualized by setting an integer to the 'clusters' argument or create nomclust() or nomprox() outcome including 'opt' component and then use one of these criteria: AIC, BIC, BK, PSFM, PSFE, SI.")}
   
   if(colorful==F){clu.col=rep('black',clusters)}
   if(colorful==T & length(clu.col)<=clusters){clu.col=rainbow(clusters)}

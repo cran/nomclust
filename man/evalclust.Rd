@@ -2,30 +2,35 @@
 % Please edit documentation in R/evalclust.R
 \name{evalclust}
 \alias{evalclust}
-\title{Evaluation of Hierarchical Clustering for Nominal Data}
+\title{Cluster Quality Evaluation of Nominal Data Hierarchical Clustering}
 \usage{
-evalclust(data, clusters)
+evalclust(data, clusters, diss = NULL)
 }
 \arguments{
-\item{data}{A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.}
+\item{data}{A data.frame or a matrix with cases in rows and variables in colums.}
 
-\item{clusters}{A \emph{data.frame} or a \emph{list} of cluster memberships in a form of a sequence from the two-cluster solution to the maximal-cluster solution.}
+\item{clusters}{A data.frame or a list of cluster memberships obtained based on the dataset defined in the parameter \code{data} in the form of a sequence from the two-cluster solution to the maximal-cluster solution.}
+
+\item{diss}{An optional parameter. A matrix or a dist object containing dissimilarities calculated based on the dataset defined in the parameter \code{data}.}
 }
 \value{
-The function returns a \emph{list} with two components.
+The function returns a list with three components.
 \cr
 \cr
-The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
-To see them all in once, the form of a \emph{data.frame} is more appropriate.
+The \code{eval} component contains up to eight evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and, if the \code{diss.matrix} argument is present, the silhouette index (SI).
 \cr
 \cr
 The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
+\cr
+\cr
+The \code{call} component contains the function call.
 }
 \description{
-The \bold{evalclust} function calculates a set of evaluation criteria, see (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
-It is primarily focused on the evaluation of hierarchical clustering results obtained by similarity measures different from the ones that occur in the \bold{nomclust} package.
-Thus, it can serve for comparison of various similarity measures for categorical data.
+The function calculates a set of evaluation criteria if the original dataset and the cluster membership variables are provided. 
+ The function calculates up to eight evaluation criteria described in (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
+ It is primarily focused on evaluating hierarchical clustering results obtained by similarity measures different from those that occur in the nomclust package. 
+ Thus, it can serve for the comparison of various similarity measures for categorical data.
 }
 \examples{
 # sample data
@@ -40,7 +45,12 @@ data20.clu <- hca.object$mem
 # obtaining evaluation criteria for the provided dataset and cluster memberships
 data20.eval <- evalclust(data20, clusters = data20.clu)
 
+# visualization of the evaluation criteria
+eval.plot(data20.eval)
 
+# silhouette index can be calculated if the dissimilarity matrix is provided
+data20.eval <- evalclust(data20, clusters = data20.clu, diss = hca.object$prox)
+eval.plot(data20.eval, criteria = "SI")
 
 }
 \references{

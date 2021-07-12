@@ -1,23 +1,28 @@
-#' Evaluation of Hierarchical Clustering for Nominal Data
+#' Cluster Quality Evaluation of Nominal Data Hierarchical Clustering
 #' 
-#' @description The \bold{evalclust} function calculates a set of evaluation criteria, see (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
-#' It is primarily focused on the evaluation of hierarchical clustering results obtained by similarity measures different from the ones that occur in the \bold{nomclust} package.
-#' Thus, it can serve for comparison of various similarity measures for categorical data.
+#' @description The function calculates a set of evaluation criteria if the original dataset and the cluster membership variables are provided. 
+#'  The function calculates up to eight evaluation criteria described in (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
+#'  It is primarily focused on evaluating hierarchical clustering results obtained by similarity measures different from those that occur in the nomclust package. 
+#'  Thus, it can serve for the comparison of various similarity measures for categorical data.
 #' 
-#' @param data A \emph{data.frame} or a \emph{matrix} with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in colums.
 #' 
-#' @param clusters A \emph{data.frame} or a \emph{list} of cluster memberships in a form of a sequence from the two-cluster solution to the maximal-cluster solution.
+#' @param clusters A data.frame or a list of cluster memberships obtained based on the dataset defined in the parameter \code{data} in the form of a sequence from the two-cluster solution to the maximal-cluster solution.
 #' 
-#' @return The function returns a \emph{list} with two components.
+#' @param diss An optional parameter. A matrix or a dist object containing dissimilarities calculated based on the dataset defined in the parameter \code{data}.
+#' 
+#' @return The function returns a list with three components.
 #' \cr
 #' \cr
-#' The \code{eval} component contains seven evaluation criteria in as vectors in a \emph{list}. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayessian (BIC) and Akaike (AIC) information criteria for categorical data and the BK index.
-#' To see them all in once, the form of a \emph{data.frame} is more appropriate.
+#' The \code{eval} component contains up to eight evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and, if the \code{diss.matrix} argument is present, the silhouette index (SI).
 #' \cr
 #' \cr
 #' The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
-#'
+#' \cr
+#' \cr
+#' The \code{call} component contains the function call.
+#' 
 #'@references
 #' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
 #'
@@ -39,11 +44,16 @@
 #' # obtaining evaluation criteria for the provided dataset and cluster memberships
 #' data20.eval <- evalclust(data20, clusters = data20.clu)
 #' 
+#' # visualization of the evaluation criteria
+#' eval.plot(data20.eval)
 #' 
+#' # silhouette index can be calculated if the dissimilarity matrix is provided
+#' data20.eval <- evalclust(data20, clusters = data20.clu, diss = hca.object$prox)
+#' eval.plot(data20.eval, criteria = "SI")
 #' 
 #' @export 
 
-evalclust <- function (data, clusters) {
+evalclust <- function (data, clusters, diss = NULL) {
   
   clu_low = 2
   
@@ -55,6 +65,10 @@ evalclust <- function (data, clusters) {
   # check the lenght of data
   if (nrow(data) != nrow(clusters)) {
     stop("The dataset and the cluster membership variables are of different lengths.")
+  }
+  
+  if (ncol(clusters) < 2) {
+    stop("The clusters argument must contain clusters for at least two cluster membership variables.")
   }
   
   # dealing with the missing data
@@ -119,12 +133,14 @@ evalclust <- function (data, clusters) {
     M[[1]] <- M1
     
     #evaluation results
-    results <- EVAL(M)
+    results <- EVAL(M, clusters, diss)
     results1 <- results[[1]]
     results2 <- results[[2]]
     
-  
-  list <- list(eval = results1, opt = results2)
+    call <- match.call()
+    
+  list <- list(eval = results1, opt = results2, call = call)
+  attr(list,"class")="nomclust"
   
   return(list)
 }
