@@ -1,9 +1,6 @@
 #' Cluster Quality Evaluation of Nominal Data Hierarchical Clustering
 #' 
-#' @description The function calculates a set of evaluation criteria if the original dataset and the cluster membership variables are provided. 
-#'  The function calculates up to eight evaluation criteria described in (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
-#'  It is primarily focused on evaluating hierarchical clustering results obtained by similarity measures different from those that occur in the nomclust package. 
-#'  Thus, it can serve for the comparison of various similarity measures for categorical data.
+#' @description The function evaluates clustering results by a set of evaluation criteria (cluster validity indices).
 #' 
 #' @param data A data.frame or a matrix with cases in rows and variables in colums.
 #' 
@@ -22,6 +19,12 @@
 #' \cr
 #' \cr
 #' The \code{call} component contains the function call.
+#' 
+#' 
+#' @details The function calculates a set of evaluation criteria if the original dataset and the cluster membership variables are provided. 
+#'  The function calculates up to eight evaluation criteria described in (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
+#'  It is primarily focused on evaluating hierarchical clustering results obtained by similarity measures different from those that occur in the nomclust package. 
+#'  Thus, it can serve for the comparison of various similarity measures for categorical data.
 #' 
 #'@references
 #' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.

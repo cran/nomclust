@@ -1,14 +1,12 @@
 #' Hierarchical Clustering of Nominal Data
 #' 
-#' @description The function runs hierarchical cluster analysis (HCA) with objects characterized by nominal variables (without natural order of categories).
-#'  It completely covers the clustering process, from the dissimilarity matrix calculation to the cluster quality evaluation. The function enables a user to choose from twelve similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
-#'  Next, it offers to choose from three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation criteria (Sulc et al., 2018). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
+#' @description The function performs and evaluates hierarchical cluster analysis of nominal data.
 #' 
 #' 
 #' @param data A data.frame or a matrix with cases in rows and variables in columns.
 #' 
 #' @param measure A character string defining the similarity measure used for computation of proximity matrix in HCA:
-#' \code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.
+#' \code{"anderberg"}, \code{"burnaby"}, \code{"eskin"}, \code{"gambaryan"}, \code{"good1"}, \code{"goodall1"}, \code{"good2"}, \code{"goodall2"}, \code{"good3"}, \code{"goodall3"}, \code{"good4"}, \code{"goodall4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"smirnov"}, \code{"ve"}, \code{"vm"}.
 #' 
 #' @param method A character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.
 #' 
@@ -17,6 +15,8 @@
 #' @param eval A logical operator; if TRUE, evaluation of the clustering results is performed.
 #' 
 #' @param prox A logical operator or a numeric value. If a logical value TRUE indicates that the proximity matrix is a part of the output. A numeric value (integer) of this argument indicates the maximal number of cases in a dataset for which a proximity matrix will occur in the output.
+#' 
+#' @param var.weights A numeric vector setting weights to the used variables. One can choose the real numbers from zero to one.
 #' 
 #' 
 #' @return The function returns a list with up to six components.
@@ -39,6 +39,12 @@
 #' \cr
 #' \cr
 #' The \code{call} component contains the function call.
+#' 
+#' 
+#' @details The function runs hierarchical cluster analysis (HCA) with objects characterized by nominal variables (without natural order of categories).
+#'  It completely covers the clustering process, from the dissimilarity matrix calculation to the cluster quality evaluation. The function enables a user to choose from the similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
+#'  Next, it offers to choose from three linkage methods that can be used for categorical data. It is also possible to assign user-defined variable weights. The obtained clusters can be evaluated by up to eight evaluation criteria (Sulc et al., 2018). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
+#' 
 #' 
 #'@references
 #' Boriah S., Chandola V. and Kumar, V. (2008). Similarity measures for categorical data: A comparative evaluation.
@@ -63,6 +69,10 @@
 #' # creating an object with results of hierarchical clustering of 
 #' hca.object <- nomclust(data20, measure = "lin", method = "average",
 #'  clu.high = 5, prox = TRUE)
+#' 
+#' # assigning variable weights
+#' hca.weights <- nomclust(data20, measure = "lin", method = "average",
+#'  clu.high = 5, prox = TRUE, var.weights = c(0.7, 1, 0.9, 0.5, 0))
 #' 
 #' # quick clustering summary
 #' summary(hca.object)
@@ -105,7 +115,7 @@
 #' @export
 
 nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, eval = TRUE, 
-                       prox = 100) {
+                       prox = 100, var.weights = NULL) {
   
   clu.low = 2
   
@@ -121,8 +131,13 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
   }
   
   # check of the used similarity measure
-  if (measure %in% c("eskin", "good1", "good2", "good3", "good4", "iof", "of", "lin", "lin1", "sm", "ve", "vm") == FALSE) {
+  if (measure %in% c("anderberg", "burnaby", "eskin", "gambaryan", "good1", "good2", "good3", "good4", "goodall1", "goodall2", "goodall3", "goodall4", "iof", "of", "lin", "lin1", "sm", "smirnov", "ve", "vm") == FALSE) {
     stop("Invalid name of the similarity measure.")
+  }
+  
+  # check of the used similarity measure
+  if (measure %in% c("good1", "good2", "good3", "good4") == TRUE) {
+    warning("This is a legacy similarity measure that will be removed in the future releases of the package. Please, use one of 'goodall' measures instead.")
   }
   
   # number of clusters cannot exceed the parameter clu.high
@@ -150,6 +165,25 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
     stop("The cluster analysis CANNOT be run if the 'data' argument contains NA values.")
   }
   
+  # check of the used similarity measure
+  if (measure %in% c("anderberg", "gambaryan", "smirnov") == TRUE & is.null(var.weights) == FALSE) {
+    var.weights <- NULL
+    warning("The selected similarity measure does not support variable weighting. The variable weights will not be applied.")
+  }
+  
+  
+  # OWN-DEFINED WEIGHTS
+  if (is.null(var.weights) == TRUE) {
+    var.weights <- rep(1, ncol(data))
+  } else if (!(is.numeric(var.weights) & length(var.weights) == ncol(data))) {
+    stop("The weight vector should be numeric with the length equal to the number of clustered variables.")
+  } else if (!all(is.finite(var.weights))) {
+    stop("The weight vector can contain only finite numbers in a range from zero to one.")
+  } else if (!(range(var.weights)[1] >= 0 & range(var.weights)[2] <= 1)) {
+    stop("The weight vector should contain values in a range from zero to one.")
+  }
+  
+  
   rnames <- row.names(data)
   
   # if matrix, coerce to data.frame
@@ -174,7 +208,7 @@ nomclust <- function (data, measure = "lin", method = "average", clu.high = 6, e
   max_num_cat <- max(num_cat)
   
   #computing the proximity matrices
-  diss.matrix <- SIMILARITY(data, measure, freq.table) # casem pridat var.weight argument
+  diss.matrix <- as.matrix(SIMILARITY(data, measure, freq.table, wt = var.weights))
   row.names(diss.matrix) <- rnames
   
   #hierarchical cluster analysis, where "prox" is a proximity matrix

@@ -10,6 +10,41 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// anderberg_cpp
+std::vector<double> anderberg_cpp(const double r, const double s, const std::vector<double>& dat_vec, const std::vector<double>& freq_rel, const double freq_rel_r, const std::vector<double>& num_cat, const std::vector<double>& w, const double sum_w);
+RcppExport SEXP _nomclust_anderberg_cpp(SEXP rSEXP, SEXP sSEXP, SEXP dat_vecSEXP, SEXP freq_relSEXP, SEXP freq_rel_rSEXP, SEXP num_catSEXP, SEXP wSEXP, SEXP sum_wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type dat_vec(dat_vecSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type freq_rel(freq_relSEXP);
+    Rcpp::traits::input_parameter< const double >::type freq_rel_r(freq_rel_rSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type num_cat(num_catSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const double >::type sum_w(sum_wSEXP);
+    rcpp_result_gen = Rcpp::wrap(anderberg_cpp(r, s, dat_vec, freq_rel, freq_rel_r, num_cat, w, sum_w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// burnaby_cpp
+std::vector<double> burnaby_cpp(const double r, const double s, const std::vector<double>& dat_vec, const std::vector<double>& freq_rel, const double freq_rel_r, const std::vector<double>& w, const double sum_w);
+RcppExport SEXP _nomclust_burnaby_cpp(SEXP rSEXP, SEXP sSEXP, SEXP dat_vecSEXP, SEXP freq_relSEXP, SEXP freq_rel_rSEXP, SEXP wSEXP, SEXP sum_wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type dat_vec(dat_vecSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type freq_rel(freq_relSEXP);
+    Rcpp::traits::input_parameter< const double >::type freq_rel_r(freq_rel_rSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const double >::type sum_w(sum_wSEXP);
+    rcpp_result_gen = Rcpp::wrap(burnaby_cpp(r, s, dat_vec, freq_rel, freq_rel_r, w, sum_w));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eskin_cpp
 std::vector<double> eskin_cpp(const double r, const double s, const std::vector<double>& num_cat, const std::vector<double>& dat_vec, const std::vector<double>& w, const double sum_w);
 RcppExport SEXP _nomclust_eskin_cpp(SEXP rSEXP, SEXP sSEXP, SEXP num_catSEXP, SEXP dat_vecSEXP, SEXP wSEXP, SEXP sum_wSEXP) {
@@ -23,6 +58,24 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP);
     Rcpp::traits::input_parameter< const double >::type sum_w(sum_wSEXP);
     rcpp_result_gen = Rcpp::wrap(eskin_cpp(r, s, num_cat, dat_vec, w, sum_w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gambaryan_cpp
+std::vector<double> gambaryan_cpp(const double r, const double s, const std::vector<double>& dat_vec, const std::vector<double>& freq_rel, const double freq_rel_r, const double num_cat_sum, const std::vector<double>& w, const double sum_w);
+RcppExport SEXP _nomclust_gambaryan_cpp(SEXP rSEXP, SEXP sSEXP, SEXP dat_vecSEXP, SEXP freq_relSEXP, SEXP freq_rel_rSEXP, SEXP num_cat_sumSEXP, SEXP wSEXP, SEXP sum_wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type dat_vec(dat_vecSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type freq_rel(freq_relSEXP);
+    Rcpp::traits::input_parameter< const double >::type freq_rel_r(freq_rel_rSEXP);
+    Rcpp::traits::input_parameter< const double >::type num_cat_sum(num_cat_sumSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const double >::type sum_w(sum_wSEXP);
+    rcpp_result_gen = Rcpp::wrap(gambaryan_cpp(r, s, dat_vec, freq_rel, freq_rel_r, num_cat_sum, w, sum_w));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -180,6 +233,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// smirnov_cpp
+std::vector<double> smirnov_cpp(const double r, const double s, const std::vector<double>& dat_vec, const std::vector<double>& freq_abs, const double freq_abs_r, const double num_cat_sum, const std::vector<double>& w, const double sum_w);
+RcppExport SEXP _nomclust_smirnov_cpp(SEXP rSEXP, SEXP sSEXP, SEXP dat_vecSEXP, SEXP freq_absSEXP, SEXP freq_abs_rSEXP, SEXP num_cat_sumSEXP, SEXP wSEXP, SEXP sum_wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< const double >::type s(sSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type dat_vec(dat_vecSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type freq_abs(freq_absSEXP);
+    Rcpp::traits::input_parameter< const double >::type freq_abs_r(freq_abs_rSEXP);
+    Rcpp::traits::input_parameter< const double >::type num_cat_sum(num_cat_sumSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type w(wSEXP);
+    Rcpp::traits::input_parameter< const double >::type sum_w(sum_wSEXP);
+    rcpp_result_gen = Rcpp::wrap(smirnov_cpp(r, s, dat_vec, freq_abs, freq_abs_r, num_cat_sum, w, sum_w));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ve_cpp
 std::vector<double> ve_cpp(const double r, const double s, const std::vector<double>& dat_vec, const std::vector<double>& norm_entropy, const std::vector<double>& w, const double sum_w);
 RcppExport SEXP _nomclust_ve_cpp(SEXP rSEXP, SEXP sSEXP, SEXP dat_vecSEXP, SEXP norm_entropySEXP, SEXP wSEXP, SEXP sum_wSEXP) {
@@ -214,7 +285,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_nomclust_anderberg_cpp", (DL_FUNC) &_nomclust_anderberg_cpp, 8},
+    {"_nomclust_burnaby_cpp", (DL_FUNC) &_nomclust_burnaby_cpp, 7},
     {"_nomclust_eskin_cpp", (DL_FUNC) &_nomclust_eskin_cpp, 6},
+    {"_nomclust_gambaryan_cpp", (DL_FUNC) &_nomclust_gambaryan_cpp, 8},
     {"_nomclust_good1_cpp", (DL_FUNC) &_nomclust_good1_cpp, 8},
     {"_nomclust_good2_cpp", (DL_FUNC) &_nomclust_good2_cpp, 8},
     {"_nomclust_good3_cpp", (DL_FUNC) &_nomclust_good3_cpp, 7},
@@ -224,6 +298,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_nomclust_lin_cpp", (DL_FUNC) &_nomclust_lin_cpp, 7},
     {"_nomclust_of_cpp", (DL_FUNC) &_nomclust_of_cpp, 8},
     {"_nomclust_sm_cpp", (DL_FUNC) &_nomclust_sm_cpp, 5},
+    {"_nomclust_smirnov_cpp", (DL_FUNC) &_nomclust_smirnov_cpp, 8},
     {"_nomclust_ve_cpp", (DL_FUNC) &_nomclust_ve_cpp, 6},
     {"_nomclust_vm_cpp", (DL_FUNC) &_nomclust_vm_cpp, 6},
     {NULL, NULL, 0}

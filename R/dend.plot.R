@@ -1,28 +1,28 @@
 #' Visualization of Cluster Hierarchy using a Dendrogram
 #' 
-#' @description The function visualizes the hierarchy of clusters using a dendrogram. The function also enables a user to distinguish the individual clusters with colors. 
-#' The number of displayed clusters can be defined by a user or by one of the six evaluation criteria.
+#' @description The function \code{dend.plot()} visualizes the hierarchy of clusters using a dendrogram. The function also enables a user to mark the individual clusters with colors. 
+#' The number of displayed clusters can be defined either by a user or by one of the five evaluation criteria.
 #' 
 #' @param x An output of the \code{nomclust()} or \code{nomprox()} functions containing the \code{dend} component.
 #' 
-#' @param clusters Either a numeric value or a character string with the name of the evaluation criterion expressing the number of displayed clusters in a dendrogram. The following evaluation criteria can be used: \code{"AIC"}, \code{"BIC"}, \code{"BK"}, \code{"PSFE"}, \code{"PSFM"}, and \code{"SI"}.
+#' @param clusters Either a \emph{numeric} value or a \emph{character} string with the name of the evaluation criterion expressing the number of displayed clusters in a dendrogram. The following evaluation criteria can be used: \code{"AIC"}, \code{"BIC"}, \code{"BK"}, \code{"PSFE"} and \code{"PSFM"}.
 #' 
-#' @param style A character string or a vector of colors defines the graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.
+#' @param style A \emph{character} string or a \emph{vector} of colors defines a graphical style of the produced plots. There are two predefined styles in the \bold{nomclust} package, namely \code{"greys"} and \code{"dark"}, but a custom color scheme can be set by a user as a vector of a length four.
 #'
-#' @param colorful A logical argument that is specifying if the output will be colorful or black and white.
+#' @param colorful A \emph{logical} argument specifying if the output will be colorful or black and white.
 #' 
-#' @param clu.col An optional vector of colors that allows a researcher to apply user-defined colors for displayed (marked) clusters in a dendrogram.
+#' @param clu.col An optional \emph{vector} of colors which allows a researcher to apply user-defined colors for displayed (marked) clusters in a dendrogram.
 #' 
-#' @param main A character string with the chart title.
+#' @param main A \emph{character} string with the chart title.
 #' 
-#' @param ac A logical argument that indicates if an agglomerative coefficient will be present in the output.
+#' @param ac A \emph{logical} argument indicating if an agglomerative coefficient will be present in the output.
 #' 
 #' @param ... Other graphical arguments compatible with the generic \code{plot()} function.
 #' 
 #' @return The function returns a dendrogram describing the hierarchy of clusters that can help to identify the optimal number of clusters.
 #' \cr
 #'
-#' @details The function can be applied to a \code{nomclust()} or \code{nomprox()} output containing the \code{dend} component.
+#' @details The function can be applied to a \code{nomclust()} or \code{nomprox()} output containing the \code{dend} component. This component is not available when the optimization process is used.
 #'
 #' @seealso
 #' \code{\link[nomclust]{eval.plot}}, \code{\link[nomclust]{nomclust}}, \code{\link[nomclust]{nomprox}}.
@@ -50,9 +50,7 @@
 #' 
 #' @export 
 
-
 dend.plot <- function(x, clusters = "BIC", style = "greys", colorful = TRUE, clu.col = NA, main = "Dendrogram", ac = TRUE, ...) {
-  
   #read input arguments
   if(style[1] == "dark"){style = rep("black",4)}
   if(style[1] == "greys"){    style = grey.colors(5)}
@@ -83,23 +81,21 @@ dend.plot <- function(x, clusters = "BIC", style = "greys", colorful = TRUE, clu
     if(!is.numeric(clusters)){
       clusters=toupper(clusters)
     }
-    if(!("opt" %in% names(x)) & clusters %in% c('BIC','AIC','PSFM','PSFE','BK','SI')){
-      clusters=1
-      colorful=F} 
+    if(!("opt" %in% names(x)) & clusters == "BIC"){clusters=1} #BIC is pre-defined
     
-    if(!(clusters %in% c('BIC','AIC','PSFM','PSFE','BK','SI') | if(is.numeric(clusters)){clusters%%1==0 & clusters>0}else{F})){
-      stop("Choose the number of clusters to be visualized. It should be either a number or one of these criteria: AIC, BIC, BK, PSFM, PSFE, SI.")
+    if(!(clusters %in% c('BIC','AIC','PSFM','PSFE','BK') | if(is.numeric(clusters)){clusters%%1==0 & clusters>0}else{F})){
+      stop('Choose the number of clusters to be visualized. It should be either a number or one of these criteria: AIC, BIC, BK, PSFM, PSFE.')
     }
     
   }else{
-    stop("Input argument x is missing or incorrect. Output from nomclust() or nomprox() functions with 'dend' component is required.")
+    stop("Input argument x is missing or incorrect. Output from nomclust() or nomprox() functions with 'dend' and 'opt' components is required.")
 
   }
   
-  if(is.null(x$opt)){warning("Component 'opt' is missing. Hence the 'clusters' argument is ignored by the plotting function. Choose the number of clusters to be visualized by setting an integer to the 'clusters' argument or create nomclust() or nomprox() outcome including 'opt' component and then use one of these criteria: AIC, BIC, BK, PSFM, PSFE, SI.")}
-  
   if(colorful==F){clu.col=rep('black',clusters)}
-  if(colorful==T & length(clu.col)<=clusters){clu.col=rainbow(clusters)}
+  if(colorful==T & (length(clu.col)==0 | is.na(clu.col[1]))){clu.col=rainbow(clusters)}
+  if(colorful==T & length(clu.col)>=clusters){clu.col=clu.col[1:clusters]}
+  if(colorful==T & length(clu.col)!=clusters){stop("Input argument clu.col is missing or incorrect. Vector of size equal to number of clusters containing color names or color codes is required.")}
 
   #create plot
   pltree(a.object, hang=-1, lty=2, lwd=2, sub="", xlab='',axes=F, col.lab = style[3],col=style[1],main=main)
@@ -119,8 +115,8 @@ dend.plot <- function(x, clusters = "BIC", style = "greys", colorful = TRUE, clu
   merge.backup=              merge    # for one-object clusters
   col.backup=                vector() # for one-object clusters
   starts.at.zero=           (merge<0) # check what vertical lines starts from 0
-  cluster.height=            vector() # saves ancerstor's height for vertical lines to start from
-  ancestors.col=             vector() # saves ancerstor's colors
+  cluster.height=            vector() # saves ancestor's height for vertical lines to start from
+  ancestors.col=             vector() # saves ancestor's colors
   i=                         1        # start iterations
   
   
@@ -129,14 +125,14 @@ repeat{
   step=merge[i,]
   x1=ifelse(starts.at.zero[i,1], which( order==(-step[1])),-merge[i,1] )
   x2=ifelse(starts.at.zero[i,2], which( order==(-step[2])),-merge[i,2] )
-  
-  #get y coordinates
+
+  # get y coordinates
   if(starts.at.zero[i,1]==T){
     y1.bottom=0
     y1.top=height[i]
     ancestors.col[x1]=order.col[x1]
   }else{
-    y1.bottom=cluster.height[which(merge[1:i,1]==x1)] #start where the ancestor ended
+    y1.bottom=cluster.height[which(merge[1:i,1]==x1 | merge[1:i,1]==-x1)] #start where the ancestor ended
     y1.top=height[i]
   }
   if(starts.at.zero[i,2]==T){
@@ -144,21 +140,21 @@ repeat{
     y2.top=height[i]
     ancestors.col[x2]=order.col[x2]
   }else{
-    y2.bottom=cluster.height[which(merge[1:i,1]==x2)] #start where the ancestor ended
+    y2.bottom=cluster.height[which(merge[1:i,1]==x2 | merge[1:i,1]==-x2)] #start where the ancestor ended
     y2.top=height[i]
     
   }
-  
-  #update x coordinates of newly created cluster
-  merge[which(merge==i)]=-mean(c(x1,x2))              #for future steps
-  merge[i,]=c(mean(c(x1,x2)),mean(c(x1,x2)))          #keeping track of ancestors
+
+  # update x coordinates of newly created cluster
+  merge[which(merge.backup==i)]=-mean(c(x1,x2))       # for future steps
+  merge[i,]=c(mean(c(x1,x2)),mean(c(x1,x2)))          # keeping track of ancestors
   cluster.height[i]=max(c(y1.top,y2.top))
   
-  #check for break
+  # check for break
   if(ancestors.col[x1] != ancestors.col[x2]) break
   
   
-  #draw segments
+  # draw segments
   col.backup=c(col.backup,ancestors.col[x1])
   segments(x1,y1.bottom,x1,y1.top,lwd=3, col=clu.col[ancestors.col[x1]])
   segments(x2,y2.bottom,x2,y2.top,lwd=3, col=clu.col[ancestors.col[x1]])
@@ -169,8 +165,6 @@ repeat{
   if(i == length(order)) break
 }
   #work with one-object clusters
-#  i=nrow(merge.backup)
-#  i
   temp=as.vector(merge.backup[-c(1:(i-1)),])
   temp=-temp[which(temp<0)]
   temp=which(order %in% temp)
@@ -179,7 +173,6 @@ repeat{
     col.temp=which(!(1:clusters %in% col.backup))
     col.temp
     clu.col
-#    i=1
     for(i in 1:length(temp)){
       segments(temp[i],0,temp[i],y1.top,lwd=3, col=clu.col[col.temp[i]])
     }
@@ -187,4 +180,3 @@ repeat{
   
 
 }
-

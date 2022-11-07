@@ -4,10 +4,12 @@
 \alias{good2}
 \title{Goodall 2 (G2) Measure}
 \usage{
-good2(data)
+good2(data, var.weights = NULL)
 }
 \arguments{
-\item{data}{A data.frame or a matrix with cases in rows and variables in colums.}
+\item{data}{A data.frame or a matrix with cases in rows and variables in columns.}
+
+\item{var.weights}{A numeric vector setting weights to the used variables. One can choose the real numbers from zero to one.}
 }
 \value{
 The function returns an object of the class "dist".
@@ -27,6 +29,9 @@ data(data20)
 # dissimilarity matrix calculation
 prox.good2 <- good2(data20)
 
+# dissimilarity matrix calculation with variable weights
+weights.good2 <- good2(data20, var.weights = c(0.7, 1, 0.9, 0.5, 0))
+
 }
 \references{
 Boriah S., Chandola V., Kumar V. (2008). Similarity measures for categorical data: A comparative evaluation.
@@ -36,15 +41,23 @@ In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p
 Goodall V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
 }
 \seealso{
+\code{\link[nomclust]{anderberg}},
+\code{\link[nomclust]{burnaby}},
 \code{\link[nomclust]{eskin}},
+\code{\link[nomclust]{gambaryan}},
 \code{\link[nomclust]{good1}},
+\code{\link[nomclust]{goodall1}},
+\code{\link[nomclust]{goodall2}},
 \code{\link[nomclust]{good3}},
+\code{\link[nomclust]{goodall3}},
 \code{\link[nomclust]{good4}},
+\code{\link[nomclust]{goodall4}},
 \code{\link[nomclust]{iof}},
 \code{\link[nomclust]{lin}},
 \code{\link[nomclust]{lin1}},
 \code{\link[nomclust]{of}},
 \code{\link[nomclust]{sm}},
+\code{\link[nomclust]{smirnov}},
 \code{\link[nomclust]{ve}},
 \code{\link[nomclust]{vm}}.
 }

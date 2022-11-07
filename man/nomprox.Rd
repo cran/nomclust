@@ -49,6 +49,9 @@ The \code{prox} component contains the dissimilarity matrix in the form of the "
 The \code{call} component contains the function call.
 }
 \description{
+The function performs hierarchical cluster analysis based on a dissimilarity matrix.
+}
+\details{
 The function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
 It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation indices (Sulc et al., 2018).
 }

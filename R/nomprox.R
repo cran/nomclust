@@ -1,7 +1,6 @@
 #' Hierarchical Clustering of Nominal Data Based on a Proximity Matrix
 #' 
-#' @description The function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
-#' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation indices (Sulc et al., 2018).
+#' @description The function performs hierarchical cluster analysis based on a dissimilarity matrix.
 #' 
 #' @param data A data.frame or a matrix with cases in rows and variables in columns.
 #' 
@@ -35,6 +34,10 @@
 #' \cr
 #' \cr
 #' The \code{call} component contains the function call.
+#' 
+#' 
+#' @details The function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
+#' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation indices (Sulc et al., 2018).
 #' 
 #' @references
 #' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.

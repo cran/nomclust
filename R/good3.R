@@ -2,7 +2,9 @@
 #' 
 #' @description The function calculates a dissimilarity matrix based on the G3 similarity measure.
 #'  
-#' @param data A data.frame or a matrix with cases in rows and variables in colums.
+#' @param data A data.frame or a matrix with cases in rows and variables in columns.
+#' 
+#' @param var.weights A numeric vector setting weights to the used variables. One can choose the real numbers from zero to one.
 #' 
 #' @return The function returns an object of the class "dist".
 #' \cr
@@ -19,15 +21,23 @@
 #' Goodall V.D. (1966). A new similarity index based on probability. Biometrics, 22(4), p. 882.
 #'
 #' @seealso
+#' \code{\link[nomclust]{anderberg}},
+#' \code{\link[nomclust]{burnaby}},
 #' \code{\link[nomclust]{eskin}},
+#' \code{\link[nomclust]{gambaryan}},
 #' \code{\link[nomclust]{good1}},
+#' \code{\link[nomclust]{goodall1}},
 #' \code{\link[nomclust]{good2}},
+#' \code{\link[nomclust]{goodall2}},
+#' \code{\link[nomclust]{goodall3}},
 #' \code{\link[nomclust]{good4}},
+#' \code{\link[nomclust]{goodall4}},
 #' \code{\link[nomclust]{iof}},
 #' \code{\link[nomclust]{lin}},
 #' \code{\link[nomclust]{lin1}},
 #' \code{\link[nomclust]{of}},
 #' \code{\link[nomclust]{sm}},
+#' \code{\link[nomclust]{smirnov}},
 #' \code{\link[nomclust]{ve}},
 #' \code{\link[nomclust]{vm}}.
 #'
@@ -40,9 +50,12 @@
 #' # dissimilarity matrix calculation
 #' prox.good3 <- good3(data20)
 #'
+#' # dissimilarity matrix calculation with variable weights
+#' weights.good3 <- good3(data20, var.weights = c(0.7, 1, 0.9, 0.5, 0))
+#'
 #' @export 
 
-good3 <- function(data) {
+good3 <- function(data, var.weights = NULL) {
   
   # dealing with the missing data
   if (sum(is.na(data)) > 0) {
@@ -62,19 +75,20 @@ good3 <- function(data) {
   #   var.wgt <- WGT(data, var.weights, alpha)
   
   # OWN-DEFINED WEIGHTS
-  # } else if (is.numeric(var.weights) == TRUE) {
-  #    if(is.na(sum(var.weights >= 0)) | sum(var.weights >= 0)!=ncol(data)) {
-  #     stop("The vector of weights contains negative or missing values.")
-  #  }
-  #    var.wgt <- var.weights
+  if (is.null(var.weights) == TRUE) {
+    var.weights <- rep(1, ncol(data))
+  } else if (!(is.numeric(var.weights) & length(var.weights) == ncol(data))) {
+    stop("The weight vector should be numeric with the length equal to the number of clustered variables.")
+  } else if (!all(is.finite(var.weights))) {
+    stop("The weight vector can contain only finite numbers in a range from zero to one.")
+  } else if (!(range(var.weights)[1] >= 0 & range(var.weights)[2] <= 1)) {
+    stop("The weight vector should contain values in a range from zero to one.")
+  }
   
   
-  # } else {
-  #   stop("Invalid weighting scheme.")
-  # }
   freq.table <- freq.abs(data)
 
-  prox_matrix <- SIMILARITY(data, measure = "good3", freq.table)
+  prox_matrix <- SIMILARITY(data, measure = "good3", freq.table, wt = var.weights)
   
   row.names(prox_matrix) <- rnames
   

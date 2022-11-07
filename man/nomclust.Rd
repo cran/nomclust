@@ -10,14 +10,15 @@ nomclust(
   method = "average",
   clu.high = 6,
   eval = TRUE,
-  prox = 100
+  prox = 100,
+  var.weights = NULL
 )
 }
 \arguments{
 \item{data}{A data.frame or a matrix with cases in rows and variables in columns.}
 
 \item{measure}{A character string defining the similarity measure used for computation of proximity matrix in HCA:
-\code{"eskin"}, \code{"good1"}, \code{"good2"}, \code{"good3"}, \code{"good4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"ve"}, \code{"vm"}.}
+\code{"anderberg"}, \code{"burnaby"}, \code{"eskin"}, \code{"gambaryan"}, \code{"good1"}, \code{"goodall1"}, \code{"good2"}, \code{"goodall2"}, \code{"good3"}, \code{"goodall3"}, \code{"good4"}, \code{"goodall4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"smirnov"}, \code{"ve"}, \code{"vm"}.}
 
 \item{method}{A character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
 
@@ -26,6 +27,8 @@ nomclust(
 \item{eval}{A logical operator; if TRUE, evaluation of the clustering results is performed.}
 
 \item{prox}{A logical operator or a numeric value. If a logical value TRUE indicates that the proximity matrix is a part of the output. A numeric value (integer) of this argument indicates the maximal number of cases in a dataset for which a proximity matrix will occur in the output.}
+
+\item{var.weights}{A numeric vector setting weights to the used variables. One can choose the real numbers from zero to one.}
 }
 \value{
 The function returns a list with up to six components.
@@ -50,9 +53,12 @@ The \code{prox} component contains the dissimilarity matrix in the form of the "
 The \code{call} component contains the function call.
 }
 \description{
+The function performs and evaluates hierarchical cluster analysis of nominal data.
+}
+\details{
 The function runs hierarchical cluster analysis (HCA) with objects characterized by nominal variables (without natural order of categories).
- It completely covers the clustering process, from the dissimilarity matrix calculation to the cluster quality evaluation. The function enables a user to choose from twelve similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
- Next, it offers to choose from three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation criteria (Sulc et al., 2018). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
+ It completely covers the clustering process, from the dissimilarity matrix calculation to the cluster quality evaluation. The function enables a user to choose from the similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
+ Next, it offers to choose from three linkage methods that can be used for categorical data. It is also possible to assign user-defined variable weights. The obtained clusters can be evaluated by up to eight evaluation criteria (Sulc et al., 2018). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
 }
 \examples{
 # sample data
@@ -61,6 +67,10 @@ data(data20)
 # creating an object with results of hierarchical clustering of 
 hca.object <- nomclust(data20, measure = "lin", method = "average",
  clu.high = 5, prox = TRUE)
+
+# assigning variable weights
+hca.weights <- nomclust(data20, measure = "lin", method = "average",
+ clu.high = 5, prox = TRUE, var.weights = c(0.7, 1, 0.9, 0.5, 0))
 
 # quick clustering summary
 summary(hca.object)

@@ -27,6 +27,9 @@ The \code{opt} component is present in the output together with the \code{eval} 
 The \code{call} component contains the function call.
 }
 \description{
+The function evaluates clustering results by a set of evaluation criteria (cluster validity indices).
+}
+\details{
 The function calculates a set of evaluation criteria if the original dataset and the cluster membership variables are provided. 
  The function calculates up to eight evaluation criteria described in (Sulc et al., 2018) and provides the optimal number of clusters based on these criteria. 
  It is primarily focused on evaluating hierarchical clustering results obtained by similarity measures different from those that occur in the nomclust package. 
