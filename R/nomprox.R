@@ -20,8 +20,8 @@
 #' The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a list.
 #' \cr
 #' \cr
-#' The \code{eval} component contains up to eight evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and, if the prox component is present, the silhouette index (SI).
+#' The \code{eval} component contains up to 13 evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+#' Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, Category Utility (CU), Category Information (CI), Hartigan Mutability (HM), Hartigan Entropy (HE) and, if the prox component is present, the silhouette index (SI) and the Dunn index (DI).
 #' \cr
 #' \cr
 #' The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
@@ -37,9 +37,12 @@
 #' 
 #' 
 #' @details The function performs hierarchical cluster analysis in situations when the proximity (dissimilarity) matrix was calculated externally. For instance, in a different R package, in an own-created function, or in other software.
-#' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to eight evaluation indices (Sulc et al., 2018).
+#' It offers three linkage methods that can be used for categorical data. The obtained clusters can be evaluated by up to 13 evaluation criteria (Sulc et al., 2018) and (Corter and Gluck, 1992).
 #' 
 #' @references
+#' Corter J.E., Gluck M.A. (1992). Explaining basic categories: Feature predictability and information. Psychological Bulletin 111(2), p. 291–303.
+#' \cr
+#' \cr
 #' Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
 #' 
 #' @seealso

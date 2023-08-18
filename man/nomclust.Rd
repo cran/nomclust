@@ -18,7 +18,7 @@ nomclust(
 \item{data}{A data.frame or a matrix with cases in rows and variables in columns.}
 
 \item{measure}{A character string defining the similarity measure used for computation of proximity matrix in HCA:
-\code{"anderberg"}, \code{"burnaby"}, \code{"eskin"}, \code{"gambaryan"}, \code{"good1"}, \code{"goodall1"}, \code{"good2"}, \code{"goodall2"}, \code{"good3"}, \code{"goodall3"}, \code{"good4"}, \code{"goodall4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"smirnov"}, \code{"ve"}, \code{"vm"}.}
+\code{"anderberg"}, \code{"burnaby"}, \code{"eskin"}, \code{"gambaryan"}, \code{"goodall1"}, \code{"goodall2"}, \code{"goodall3"}, \code{"goodall4"}, \code{"iof"}, \code{"lin"}, \code{"lin1"}, \code{"of"}, \code{"sm"}, \code{"smirnov"}, \code{"ve"}, \code{"vm"}.}
 
 \item{method}{A character string defining the clustering method. The following methods can be used: \code{"average"}, \code{"complete"}, \code{"single"}.}
 
@@ -37,8 +37,8 @@ The function returns a list with up to six components.
 The \code{mem} component contains cluster membership partitions for the selected numbers of clusters in the form of a list.
 \cr
 \cr
-The \code{eval} component contains up to eight evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
-Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, and, if the prox component is present, the silhouette index (SI).
+The \code{eval} component contains up to 13 evaluation criteria as vectors in a list. Namely, Within-cluster mutability coefficient (WCM), Within-cluster entropy coefficient (WCE),
+Pseudo F Indices based on the mutability (PSFM) and the entropy (PSFE), Bayesian (BIC), and Akaike (AIC) information criteria for categorical data, the BK index, Category Utility (CU), Category Information (CI), Hartigan Mutability (HM), Hartigan Entropy (HE) and, if the prox component is present, the silhouette index (SI) and the Dunn index (DI).
 \cr
 \cr
 The \code{opt} component is present in the output together with the \code{eval} component. It displays the optimal number of clusters for the evaluation criteria from the \code{eval} component, except for WCM and WCE, where the optimal number of clusters is based on the elbow method.
@@ -58,7 +58,7 @@ The function performs and evaluates hierarchical cluster analysis of nominal dat
 \details{
 The function runs hierarchical cluster analysis (HCA) with objects characterized by nominal variables (without natural order of categories).
  It completely covers the clustering process, from the dissimilarity matrix calculation to the cluster quality evaluation. The function enables a user to choose from the similarity measures for nominal data summarized by (Boriah et al., 2008) and by (Sulc and Rezankova, 2019). 
- Next, it offers to choose from three linkage methods that can be used for categorical data. It is also possible to assign user-defined variable weights. The obtained clusters can be evaluated by up to eight evaluation criteria (Sulc et al., 2018). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
+ Next, it offers to choose from three linkage methods that can be used for categorical data. It is also possible to assign user-defined variable weights. The obtained clusters can be evaluated by up to 13 evaluation criteria (Sulc et al., 2018) and (Corter and Gluck, 1992). The output of the nomclust() function may serve as an input for the visualization functions \emph{dend.plot} and \emph{eval.plot} in the nomclust package.
 }
 \examples{
 # sample data
@@ -116,10 +116,13 @@ Boriah S., Chandola V. and Kumar, V. (2008). Similarity measures for categorical
 In: Proceedings of the 8th SIAM International Conference on Data Mining, SIAM, p. 243-254.
 \cr
 \cr
+Corter J.E., Gluck M.A. (1992). Explaining basic categories: Feature predictability and information. Psychological Bulletin 111(2), p. 291–303.
+\cr
+\cr
 Sulc Z., Cibulkova J., Prochazka J., Rezankova H. (2018). Internal Evaluation Criteria for Categorical Data in Hierarchical Clustering: Optimal Number of Clusters Determination, Metodoloski Zveski, 15(2), p. 1-20.
 \cr
 \cr
-Sulc Z. and Rezankova H. (2019). Comparison of Similarity Measures for Categorical Data in Hierarchical Clustering. Journal of Classification. 2019, 35(1), p. 58-72. DOI: 10.1007/s00357-019-09317-5.
+Sulc Z. and Rezankova H. (2019). Comparison of Similarity Measures for Categorical Data in Hierarchical Clustering. Journal of Classification, 35(1), p. 58-72. DOI: 10.1007/s00357-019-09317-5.
 }
 \seealso{
 \code{\link[nomclust]{evalclust}}, \code{\link[nomclust]{nomprox}}, \code{\link[nomclust]{eval.plot}}, \code{\link[nomclust]{dend.plot}}.

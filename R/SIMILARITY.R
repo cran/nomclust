@@ -18,20 +18,12 @@ SIMILARITY <- function(data, measure, freq.table, wt) {
     prox_matrix <- matrix(burnaby_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel))), nrow(freq.rel), wt, sum(wt)), ncol=r, nrow=r)
   } else if (measure == "gambaryan") {
     prox_matrix <- matrix(gambaryan_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel))), nrow(freq.rel), num_cat_sum, wt, sum(wt)), ncol=r, nrow=r)
-  } else if (measure == "good1") {
-    prox_matrix <- matrix(good1_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel))), as.vector(t(t(freq.rel.simple2))), nrow(freq.rel), wt, sum(wt)), ncol=r, nrow=r)
   } else if (measure == "goodall1") {
     prox_matrix <- matrix(good1_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel))), as.vector(t(t(freq.rel2))), nrow(freq.rel), wt, sum(wt)), ncol=r, nrow=r)
-  } else if (measure == "good2") {
-    prox_matrix <- matrix(good2_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel))), as.vector(t(t(freq.rel.simple2))), nrow(freq.rel), wt, sum(wt)), ncol=r, nrow=r)
   } else if (measure == "goodall2") {
     prox_matrix <- matrix(good2_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel))), as.vector(t(t(freq.rel2))), nrow(freq.rel), wt, sum(wt)), ncol=r, nrow=r)
-  } else if (measure == "good3") {
-    prox_matrix <- matrix(good3_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel.simple2))), nrow(freq.rel.simple2), wt, sum(wt)), ncol=r, nrow=r)
   } else if (measure == "goodall3") {
     prox_matrix <- matrix(good3_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel2))), nrow(freq.rel2), wt, sum(wt)), ncol=r, nrow=r)
-  } else if (measure == "good4") {
-    prox_matrix <- matrix(good4_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel.simple2))), nrow(freq.rel.simple2), wt, sum(wt)), ncol=r, nrow=r)
   } else if (measure == "goodall4") {
     prox_matrix <- matrix(good4_cpp(r, s, as.vector(t(t(data))), as.vector(t(t(freq.rel2))), nrow(freq.rel2), wt, sum(wt)), ncol=r, nrow=r)
   } else if (measure == "iof") {

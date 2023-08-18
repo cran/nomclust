@@ -9,17 +9,17 @@ Author: Zdenek Sulc [aut, cre],
   Hana Rezankova [aut],
   Jaroslav Hornicek [aut]
 Maintainer: Zdenek Sulc <zdenek.sulc@vse.cz>
-Version: 2.6.2
-Date: 2022-11-4
+Version: 2.8.0
+Date: 2023-8-18
 Description: Similarity measures for hierarchical clustering of objects characterized by
     nominal (categorical) variables. Evaluation criteria for nominal data clustering.
-Depends: cluster, methods
+Depends: cluster, methods, clValid
 License: GPL (>= 2)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 NeedsCompilation: yes
-Packaged: 2022-11-07 16:22:49 UTC; zdenek
+Packaged: 2023-08-18 09:34:22 UTC; zdenek
 Encoding: UTF-8
 Imports: Rcpp (>= 0.11.0)
 LinkingTo: Rcpp
 Repository: CRAN
-Date/Publication: 2022-11-07 16:50:02 UTC
+Date/Publication: 2023-08-18 10:12:38 UTC
